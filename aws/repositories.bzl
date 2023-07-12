@@ -34,10 +34,10 @@ def rules_aws_dependencies():
         name = "aws_cli",
         patch_args = ["-p1"],
         patches = ["//patches:aws_cli.patch"],
-        sha256 = "ea7510386e457bf0b380cfbb1cb9d1691d6989e5a725efb68791a08493222899",
-        strip_prefix = "aws-cli-1.18.69",
+        sha256 = "3b5fa890f20f0cc21745ce851f0ef00977fbbe6ab5fa5d225570cda015759636",
+        strip_prefix = "aws-cli-1.29.2",
         # TODO(alex): this version is pretty old, upgrade along with re-vendoring deps in aws-cli.patch
-        urls = ["https://github.com/aws/aws-cli/archive/refs/tags/1.18.69.zip"],
+        urls = ["https://github.com/aws/aws-cli/archive/refs/tags/1.29.2.zip"],
     )
 
 ########
