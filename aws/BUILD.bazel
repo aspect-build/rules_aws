@@ -1,5 +1,4 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@rules_python//python:defs.bzl", "py_binary")
 load("//aws/private:resolved_toolchain.bzl", "resolved_toolchain")
 
 # For stardoc to reference the files
@@ -50,11 +49,4 @@ bzl_library(
     name = "toolchain",
     srcs = ["toolchain.bzl"],
     visibility = ["//visibility:public"],
-)
-
-py_binary(
-    name = "aws",
-    srcs = ["__main__.py"],
-    main = "__main__.py",
-    deps = ["@aws_cli//awscli:awscli_lib"],
 )

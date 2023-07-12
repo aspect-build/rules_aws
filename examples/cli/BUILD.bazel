@@ -1,0 +1,15 @@
+load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
+
+genrule(
+    name = "help",
+    srcs = [],
+    outs = ["help.txt"],
+    cmd = "$(AWS_CLI_BIN) help > $@",
+    toolchains = ["@aspect_rules_aws//aws:resolved_toolchain"],
+)
+
+assert_contains(
+    name = "help_test",
+    actual = "help.txt",
+    expected = "memorydb",
+)

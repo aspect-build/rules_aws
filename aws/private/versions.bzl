@@ -4,11 +4,16 @@ TODO: generate this file from GitHub API"""
 
 # The integrity hashes can be computed with
 # shasum -b -a 384 [downloaded file] | awk '{ print $1 }' | xxd -r -p | base64
+
+# Amazon CDN serves at urls like
+# https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.0.30.zip
+# https://awscli.amazonaws.com/AWSCLIV2-2.0.30.pkg
+# https://awscli.amazonaws.com/AWSCLIV2-2.0.30.msi
 TOOL_VERSIONS = {
-    "1.14.2": {
-        "x86_64-apple-darwin": "sha384-ws4+rANvv0YxM1SgIBUXSG9jT8dKw83nls6R5qYkEKzPUB+viBIEozSsyq2e6i+f",
-        "aarch64-apple-darwin": "sha384-HcvJbxoJtGSavkGu0e7CyD00cBlmDb0TBWJ4JSaNa70zuU3N7XlMOYm3bbQcAv2U",
-        "x86_64-pc-windows-msvc": "sha384-35YN6TKpT0L9qyRBmq48NucvyXEtHnkeC+txf2YZmmJTmOzrAKREA74BA0EZvpar",
-        "x86_64-unknown-linux-gnu": "sha384-QgGOwTaetxY0h5HWCKc/3ZtBs4N/fgaaORthn7UcEv++Idm9W+ntCCZRwvBdwHPD",
+    "2.13.0": {
+        "linux_aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-xxx"),
+        "linux_x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-qXEtDydyIB0C0sfMarp9EXoc5LpxLOMgMMx0LQMXhMJmBX3hq747KC63TcduHsoK"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-yyy"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-yyy"),
     },
 }

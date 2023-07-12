@@ -31,10 +31,10 @@ def _aws_toolchain_impl(ctx):
         tool_files = ctx.attr.target_tool.files.to_list()
         target_tool_path = _to_manifest_path(ctx, tool_files[0])
 
-    # Make the $(tool_BIN) variable available in places like genrules.
+    # Make the $(AWS_CLI_BIN) variable available in places like genrules.
     # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
     template_variables = platform_common.TemplateVariableInfo({
-        "aws_BIN": target_tool_path,
+        "AWS_CLI_BIN": target_tool_path,
     })
     default = DefaultInfo(
         files = depset(tool_files),

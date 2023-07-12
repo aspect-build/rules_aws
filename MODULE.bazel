@@ -15,7 +15,7 @@ bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.1.0", dev_dependency = True)
 
 aws = use_extension("//aws:extensions.bzl", "aws")
-aws.toolchain(aws_version = "1.14.2")
-use_repo(aws, "aws_cli", "aws_toolchains")
+aws.toolchain(aws_version = "2.13.0")
+use_repo(aws, "aws_toolchains")
 
 register_toolchains("@aws_toolchains//:all")
