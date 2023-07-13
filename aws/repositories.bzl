@@ -39,6 +39,7 @@ _ATTRS = {
     "download_host": attr.string(default = "https://awscli.amazonaws.com"),
     "platform": attr.string(mandatory = True, values = PLATFORMS.keys()),
 }
+_CLI_INSTALL_PATH = "installed"
 
 def _release_info(rctx):
     release_info = TOOL_VERSIONS[rctx.attr.aws_cli_version][rctx.attr.platform]
@@ -50,29 +51,43 @@ def _release_info(rctx):
         "integrity": release_info[1],
     }
 
+def _cli_install_error(result):
+    fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
+
 def _install_linux(rctx, release_info):
     rctx.download_and_extract(
         url = release_info["url"],
         integrity = release_info["integrity"],
         stripPrefix = "aws",
     )
-    result = rctx.execute(["./install", "--install-dir", "installed"])
+    result = rctx.execute(["./install", "--install-dir", _CLI_INSTALL_PATH])
     if result.return_code:
-        fail("aws CLI installer failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
-    return rctx.path("installed/v2/{}/bin/aws".format(rctx.attr.aws_cli_version))
+        _cli_install_error(result)
+    return rctx.path("{}/v2/{}/bin/aws".format(_CLI_INSTALL_PATH, rctx.attr.aws_cli_version))
 
 def _install_darwin(rctx, release_info):
     rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.pkg")
     result = rctx.execute(["pkgutil", "--expand-full", "AWSCLI.pkg", "installed"])
     if result.return_code:
-        fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
-    return rctx.path("installed/aws-cli.pkg/Payload/aws-cli/aws")
+        _cli_install_error(result)
+    return rctx.path("{}/aws-cli.pkg/Payload/aws-cli/aws".format(_CLI_INSTALL_PATH))
+
+# TODO: if we ever want to support Windows natively, this can be a starting point.
+#def _install_windows(rctx, release_info):
+#    rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.msi")
+#    # msiexec /a File.msi TARGETDIR=C:\MyInstallPoint /qn
+#    result = rctx.execute(["msiexec", "/a", "AWSCLI.msi", "TARGETDIR={}".format(_CLI_INSTALL_PATH), "/qn"])
+#    if result.return_code:
+#        _cli_install_error(result)
+#    return rctx.path("{}/".format(_CLI_INSTALL_PATH))
 
 def _aws_repo_impl(rctx):
     if rctx.attr.platform.startswith("linux"):
         target_tool_path = _install_linux(rctx, _release_info(rctx))
     elif rctx.attr.platform == "darwin":
         target_tool_path = _install_darwin(rctx, _release_info(rctx))
+    elif rctx.attr.platform == "windows":
+        fail("Windows platform is unsupported: https://github.com/aspect-build/rules_aws/issues/14")
     else:
         fail("Unexpected fall-through choosing install method, please file a bug.")
 
