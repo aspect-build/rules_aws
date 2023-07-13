@@ -23,16 +23,17 @@ PLATFORMS = {
     "darwin": struct(
         compatible_with = [
             "@platforms//os:macos",
+            # It seems they ship only a "universal" binary
             #"@platforms//cpu:x86_64",
         ],
     ),
-    "linux_x86_64": struct(
+    "linux-x86_64": struct(
         compatible_with = [
             "@platforms//os:linux",
             "@platforms//cpu:x86_64",
         ],
     ),
-    "linux_aarch64": struct(
+    "linux-aarch64": struct(
         compatible_with = [
             "@platforms//os:linux",
             "@platforms//cpu:aarch64",

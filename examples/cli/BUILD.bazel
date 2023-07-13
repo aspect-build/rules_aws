@@ -1,5 +1,7 @@
 load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
 
+# Demonstrates that you can use the CLI in a genrule.
+# The toolchain provides a "Make variable" named AWS_CLI_BIN that you can expand.
 genrule(
     name = "help",
     srcs = [],
@@ -11,5 +13,5 @@ genrule(
 assert_contains(
     name = "help_test",
     actual = "help.txt",
-    expected = "memorydb",
+    expected = "aws [options] <command> <subcommand> [parameters]",
 )
