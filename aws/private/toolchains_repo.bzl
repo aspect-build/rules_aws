@@ -39,7 +39,7 @@ PLATFORMS = {
             "@platforms//cpu:aarch64",
         ],
     ),
-    "win32": struct(
+    "windows": struct(
         compatible_with = [
             "@platforms//os:windows",
             "@platforms//cpu:x86_64",
