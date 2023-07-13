@@ -16,9 +16,27 @@ bazel_dep(name = "gazelle", version = "0.32.0", dev_dependency = True, repo_name
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependency = True)
 bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.1.2", dev_dependency = True)
+bazel_dep(name = "rules_pkg", version = "0.9.1", dev_dependency = True)
+bazel_dep(name = "rules_oci", version = "1.2.0", dev_dependency = True)
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
-use_repo(aws, "aws_toolchains")
+use_repo(aws, "aws_darwin", "aws_linux-aarch64", "aws_linux-x86_64", "aws_toolchains")
+
+oci = use_extension(
+    "@rules_oci//oci:extensions.bzl",
+    "oci",
+    dev_dependency = True,
+)
+oci.pull(
+    name = "ubuntu",
+    digest = "sha256:0bced47fffa3361afa981854fcabcd4577cd43cebbb808cea2b1f33a3dd7f508",  # tag = "latest" on 13 July 2023
+    image = "ubuntu",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+use_repo(oci, "ubuntu")
 
 register_toolchains("@aws_toolchains//:all")
