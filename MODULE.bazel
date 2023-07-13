@@ -6,16 +6,19 @@ module(
     compatibility_level = 1,
 )
 
+# Lower-bound dependency versions.
+# Do not change unless the rules no longer work with the current version.
 bazel_dep(name = "bazel_skylib", version = "1.4.1")
 bazel_dep(name = "platforms", version = "0.0.5")
 
+# Development dependencies which are not exposed to users
 bazel_dep(name = "gazelle", version = "0.32.0", dev_dependency = True, repo_name = "bazel_gazelle")
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependency = True)
 bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.1.0", dev_dependency = True)
 
 aws = use_extension("//aws:extensions.bzl", "aws")
-aws.toolchain(aws_version = "2.13.0")
+aws.toolchain(aws_cli_version = "2.13.0")
 use_repo(aws, "aws_toolchains")
 
 register_toolchains("@aws_toolchains//:all")

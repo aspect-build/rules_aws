@@ -35,27 +35,31 @@ def rules_aws_dependencies():
 ########
 _DOC = "Fetch external tools needed for aws toolchain"
 _ATTRS = {
-    "aws_version": attr.string(mandatory = True, values = TOOL_VERSIONS.keys()),
+    "aws_cli_version": attr.string(mandatory = True, values = TOOL_VERSIONS.keys()),
+    "download_host": attr.string(default = "https://awscli.amazonaws.com"),
     "platform": attr.string(mandatory = True, values = PLATFORMS.keys()),
 }
 
 def _release_info(rctx):
-    release_info = TOOL_VERSIONS[rctx.attr.aws_version][rctx.attr.platform]
+    release_info = TOOL_VERSIONS[rctx.attr.aws_cli_version][rctx.attr.platform]
     return {
-        "url": "https://awscli.amazonaws.com/" + release_info[0].format(rctx.attr.aws_version),
+        "url": "/".join([
+            rctx.attr.download_host,
+            release_info[0].format(rctx.attr.aws_cli_version),
+        ]),
         "integrity": release_info[1],
     }
 
-def _install_linux(rctx):
+def _install_linux(rctx, release_info):
     rctx.download_and_extract(
-        url = _release_info(rctx)["url"],
-        integrity = _release_info(rctx)["integrity"],
+        url = release_info["url"],
+        integrity = release_info["integrity"],
         stripPrefix = "aws",
     )
     result = rctx.execute(["./install", "--install-dir", "installed"])
     if result.return_code:
         fail("aws CLI installer failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
-    return rctx.path("installed/v2/{}/bin/aws".format(rctx.attr.aws_version))
+    return rctx.path("installed/v2/{}/bin/aws".format(rctx.attr.aws_cli_version))
 
 def _install_darwin(rctx, release_info):
     rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.pkg")

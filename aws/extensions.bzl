@@ -19,7 +19,7 @@ aws_toolchain = tag_class(attrs = {
 Base name for generated repositories, allowing more than one aws toolchain to be registered.
 Overriding the default is only permitted in the root module.
 """, default = _DEFAULT_NAME),
-    "aws_version": attr.string(doc = "Explicit version of aws.", mandatory = True),
+    "aws_cli_version": attr.string(doc = "Explicit version of the aws CLI.", mandatory = True),
 })
 
 def _toolchain_extension(module_ctx):
@@ -33,7 +33,7 @@ def _toolchain_extension(module_ctx):
                 """)
             if toolchain.name not in registrations.keys():
                 registrations[toolchain.name] = []
-            registrations[toolchain.name].append(toolchain.aws_version)
+            registrations[toolchain.name].append(toolchain.aws_cli_version)
     for name, versions in registrations.items():
         if len(versions) > 1:
             # TODO: should be semver-aware, using MVS
@@ -46,7 +46,7 @@ def _toolchain_extension(module_ctx):
 
         aws_register_toolchains(
             name = name,
-            aws_version = selected,
+            aws_cli_version = selected,
             register = False,
         )
 
