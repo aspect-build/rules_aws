@@ -4,7 +4,6 @@ These are needed for local dev, and users must install them as well.
 See https://docs.bazel.build/versions/main/skylark/deploying.html#dependencies
 """
 
-load("@aspect_bazel_lib//lib:repo_utils.bzl", "repo_utils")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", _http_archive = "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 load("//aws/private:toolchains_repo.bzl", "PLATFORMS", "toolchains_repo")
@@ -29,12 +28,6 @@ def rules_aws_dependencies():
             "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
             "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
         ],
-    )
-    http_archive(
-        name = "aspect_bazel_lib",
-        sha256 = "e3151d87910f69cf1fc88755392d7c878034a69d6499b287bcfc00b1cf9bb415",
-        strip_prefix = "bazel-lib-1.32.1",
-        url = "https://github.com/aspect-build/bazel-lib/releases/download/v1.32.1/bazel-lib-v1.32.1.tar.gz",
     )
 
 ########
@@ -61,6 +54,10 @@ def _release_info(rctx):
 def _cli_install_error(result):
     fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
 
+def _is_darwin(rctx):
+    """Returns true if the host operating system is Darwin"""
+    return rctx.os.name.lower().startswith("mac os")
+
 def _install_linux(rctx, release_info):
     rctx.download_and_extract(
         url = release_info["url"],
@@ -75,7 +72,7 @@ def _install_linux(rctx, release_info):
     # it will fail to run the aws command to determine its own version, and lay out
     # using a different path.
 
-    if repo_utils.is_darwin(rctx):
+    if _is_darwin(rctx):
         dist_dir = "v2/dist"
     else:
         dist_dir = "v2/{}/dist".format(rctx.attr.aws_cli_version)
