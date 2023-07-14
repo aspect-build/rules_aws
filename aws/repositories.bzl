@@ -84,8 +84,6 @@ def _install_darwin(rctx, release_info):
     result = rctx.execute(["pkgutil", "--expand-full", "AWSCLI.pkg", "installed"])
     if result.return_code:
         _cli_install_error(result)
-
-        fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
     dist_dir = "aws-cli.pkg/Payload/aws-cli"
     return (dist_dir, rctx.path("installed/{}/aws".format(dist_dir)))
 
