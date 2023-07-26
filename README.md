@@ -1,6 +1,8 @@
-TODO. if you don't need to fetch platform-dependent tools, then remove anything toolchain-related.
-
 # Bazel rules for Amazon Web Services (AWS)
+
+Integrations for using AWS as a deployment target for Bazel-built artifacts.
+
+This repo is EXPERIMENTAL! We have not yet decided whether to take any long-term commitment to support or maintenance of code here. We may archive and abandon the repo at any time, and may make undocumented breaking changes between releases.
 
 ## Installation
 
@@ -21,4 +23,5 @@ For example to use commit `abc123`:
 
 ## Roadmap
 
-See issue tracker.
+Aspect plans to open-source our internal AWS support from our private monorepo.
+These features are documented in the issue tracker.
