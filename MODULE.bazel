@@ -9,7 +9,7 @@ module(
 # Lower-bound dependency versions.
 # Do not change unless the rules no longer work with the current version.
 bazel_dep(name = "bazel_skylib", version = "1.4.1")
-bazel_dep(name = "platforms", version = "0.0.5")
+bazel_dep(name = "platforms", version = "0.0.7")
 
 # Development dependencies which are not exposed to users
 bazel_dep(name = "gazelle", version = "0.32.0", dev_dependency = True, repo_name = "bazel_gazelle")
