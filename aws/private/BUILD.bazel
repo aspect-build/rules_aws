@@ -17,3 +17,9 @@ bzl_library(
     srcs = ["resolved_toolchain.bzl"],
     visibility = ["//aws:__subpackages__"],
 )
+
+bzl_library(
+    name = "s3_sync",
+    srcs = ["s3_sync.bzl"],
+    visibility = ["//aws:__subpackages__"],
+)

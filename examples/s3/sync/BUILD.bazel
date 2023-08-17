@@ -1,0 +1,6 @@
+load("@aspect_rules_aws//aws:defs.bzl", "s3")
+
+s3.sync(
+    name = "fetch_file",
+    uri = "s3://static.aspect.build/sysroots",
+)
