@@ -1,0 +1,12 @@
+# See https://github.com/GoogleContainerTools/container-structure-test
+schemaVersion: 2.0.0
+
+# Verify that we put files in the paths dictated by the AWS instructions:
+# https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-instructions
+fileExistenceTests:
+  - name: lambda
+    path: "/var/task/examples/python_lambda/lambda_function.py"
+  - name: requests
+    path: "/var/task/requests/api.py"
+  - name: requests metadata
+    path: "/var/task/requests-2.31.0.dist-info/METADATA"

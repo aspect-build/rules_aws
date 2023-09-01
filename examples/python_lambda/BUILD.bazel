@@ -1,0 +1,28 @@
+"Example Python AWS lambda using a container"
+
+load("@aspect_rules_aws//aws:defs.bzl", "aws_py_lambda")
+load("@rules_oci//oci:defs.bzl", "oci_tarball")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@pip//:requirements.bzl", "requirement")
+
+compile_pip_requirements(
+    name = "requirements",
+)
+
+aws_py_lambda(
+    name = "image",
+    entry_point = "lambda_function.py",
+    deps = [requirement("requests")],
+)
+
+# Manually verify the image in a local container:
+# $ bazel run //examples/python_lambda:tarball
+# $ docker run -p 9000:8080 --rm aws_lambda_hello_world:latest
+# (in another terminal)
+# $ curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+oci_tarball(
+    name = "tarball",
+    image = ":image",
+    repo_tags = ["aws_lambda_hello_world:latest"],
+    visibility = [":__subpackages__"],
+)
