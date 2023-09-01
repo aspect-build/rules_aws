@@ -1,0 +1,36 @@
+load("@aspect_rules_py//py:defs.bzl", "py_pytest_main")
+load("@container_structure_test//:defs.bzl", "container_structure_test")
+load("@pip//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_test")
+
+# Verify we built a container with files in expected locations
+container_structure_test(
+    name = "smoke_test",
+    configs = ["container_structure_test.yaml"],
+    driver = "tar",
+    image = "//examples/python_lambda:tarball",
+)
+
+py_pytest_main(name = "__test__")
+
+py_test(
+    name = "integration_test",
+    size = "small",
+    srcs = [
+        "integration_test.py",
+        ":__test__",
+    ],
+    data = ["//examples/python_lambda:tarball"],
+    main = ":__test__.py",
+    tags = [
+        "requires-docker",
+        "requires-network",
+    ],
+    deps = [
+        ":__test__",
+        requirement("docker"),
+        requirement("pytest"),
+        requirement("requests"),
+        requirement("testcontainers"),
+    ],
+)
