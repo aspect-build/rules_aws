@@ -17,7 +17,7 @@ bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependenc
 bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.1.2", dev_dependency = True)
 bazel_dep(name = "rules_pkg", version = "0.9.1", dev_dependency = True)
-bazel_dep(name = "rules_oci", version = "1.2.0", dev_dependency = True)
+bazel_dep(name = "rules_oci", version = "1.4.0", dev_dependency = True)
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
