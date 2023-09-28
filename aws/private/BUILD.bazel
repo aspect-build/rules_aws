@@ -17,3 +17,12 @@ bzl_library(
     srcs = ["resolved_toolchain.bzl"],
     visibility = ["//aws:__subpackages__"],
 )
+
+bzl_library(
+    name = "py_lambda",
+    srcs = [
+        "py_lambda.bzl",
+        "@rules_pkg//pkg:bzl_srcs",
+    ],
+    visibility = ["//aws:__subpackages__"],
+)

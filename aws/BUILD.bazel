@@ -33,16 +33,28 @@ bzl_library(
 )
 
 bzl_library(
-    name = "defs",
-    srcs = ["defs.bzl"],
-    visibility = ["//visibility:public"],
-)
-
-bzl_library(
     name = "extensions",
     srcs = ["extensions.bzl"],
     visibility = ["//visibility:public"],
     deps = [":repositories"],
+)
+
+bzl_library(
+    name = "defs",
+    srcs = ["defs.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//aws/private:py_lambda",
+        "@rules_oci//oci:defs",
+        "@rules_python//python:defs_bzl",
+    ],
+)
+
+bzl_library(
+    name = "repositories.oci",
+    srcs = ["repositories.oci.bzl"],
+    visibility = ["//visibility:public"],
+    deps = ["@rules_oci//oci:pull"],
 )
 
 bzl_library(

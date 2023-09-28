@@ -1,7 +1,7 @@
 load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 # Demonstrates that you can use the CLI in a genrule.
 # The toolchain provides a "Make variable" named AWS_CLI_BIN that you can expand.
