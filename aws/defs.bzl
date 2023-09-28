@@ -1,8 +1,8 @@
 "Public API re-exports"
 
 load("@rules_oci//oci:defs.bzl", "oci_image")
-load("//aws/private:py_lambda.bzl", "py_lambda_tars")
 load("@rules_python//python:defs.bzl", "py_binary")
+load("//aws/private:py_lambda.bzl", "py_lambda_tars")
 
 def aws_py_lambda(name, entry_point = "lambda_function.py", deps = [], base = "@aws_lambda_python"):
     """Defines a Lambda run on the Python runtime.
