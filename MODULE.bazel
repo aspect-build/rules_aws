@@ -16,7 +16,7 @@ bazel_dep(name = "rules_pkg", version = "0.9.1")
 bazel_dep(name = "rules_python", version = "0.25.0")
 
 # Development dependencies which are not exposed to users
-bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "1.35.0", dev_dependency = True)
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.1.2", dev_dependency = True)
 bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
