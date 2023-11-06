@@ -9,7 +9,7 @@ module(
 # Lower-bound dependency versions.
 # Do not change unless the rules no longer work with the current version.
 bazel_dep(name = "aspect_rules_py", version = "0.3.0")
-bazel_dep(name = "bazel_skylib", version = "1.4.1")
+bazel_dep(name = "bazel_skylib", version = "1.5.0")
 bazel_dep(name = "platforms", version = "0.0.7")
 bazel_dep(name = "rules_oci", version = "1.4.0")
 bazel_dep(name = "rules_pkg", version = "0.9.1")
