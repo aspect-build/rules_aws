@@ -20,7 +20,7 @@ bazel_dep(name = "aspect_bazel_lib", version = "1.35.0", dev_dependency = True)
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.3.3", dev_dependency = True)
 bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
-bazel_dep(name = "gazelle", version = "0.33.0", dev_dependency = True, repo_name = "bazel_gazelle")
+bazel_dep(name = "gazelle", version = "0.35.0", dev_dependency = True, repo_name = "bazel_gazelle")
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
