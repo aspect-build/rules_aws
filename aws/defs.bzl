@@ -11,14 +11,14 @@ def aws_py_lambda(name, entry_point = "lambda_function.py", deps = [], base = "@
 
     Produces an oci_image target following https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
 
+    TODO:
+    - produce a [name].zip output following https://docs.aws.amazon.com/lambda/latest/dg/python-package.html#python-package-create-dependencies
+
     Args:
         name: name of resulting target
         entry_point: python source file implementing the handler
         deps: third-party packages required at runtime
         base: a base image that includes the AWS Runtime Interface Emulator
-
-    TODO:
-    - produce a [name].zip output following https://docs.aws.amazon.com/lambda/latest/dg/python-package.html#python-package-create-dependencies
     """
 
     bin_target = "_{}.bin".format(name)

@@ -8,19 +8,17 @@ module(
 
 # Lower-bound dependency versions.
 # Do not change unless the rules no longer work with the current version.
-bazel_dep(name = "aspect_rules_py", version = "0.3.0")
-bazel_dep(name = "bazel_skylib", version = "1.4.1")
-bazel_dep(name = "platforms", version = "0.0.7")
-bazel_dep(name = "rules_oci", version = "1.4.0")
+bazel_dep(name = "bazel_skylib", version = "1.5.0")
+bazel_dep(name = "platforms", version = "0.0.8")
+bazel_dep(name = "rules_oci", version = "1.7.0")
 bazel_dep(name = "rules_pkg", version = "0.9.1")
-bazel_dep(name = "rules_python", version = "0.25.0")
+bazel_dep(name = "rules_python", version = "0.29.0")
 
 # Development dependencies which are not exposed to users
-bazel_dep(name = "aspect_bazel_lib", version = "1.35.0", dev_dependency = True)
-bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.2", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "2.4.1", dev_dependency = True)
+bazel_dep(name = "aspect_rules_py", version = "0.5.0", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.3.3", dev_dependency = True)
 bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
-bazel_dep(name = "gazelle", version = "0.33.0", dev_dependency = True, repo_name = "bazel_gazelle")
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
