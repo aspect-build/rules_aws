@@ -14,6 +14,11 @@ local_repository(
 # you should fetch it *before* calling this.
 # Alternatively, you can skip calling this function, so long as you've
 # already fetched all the dependencies.
-load("@aspect_rules_aws//aws:repositories.bzl", "rules_aws_dependencies")
+load("@aspect_rules_aws//aws:repositories.bzl", "aws_register_toolchains", "rules_aws_dependencies")
 
 rules_aws_dependencies()
+
+aws_register_toolchains(
+    name = "aws",
+    aws_cli_version = "2.13.0",
+)
