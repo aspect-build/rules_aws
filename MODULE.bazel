@@ -22,7 +22,7 @@ bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency 
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
-use_repo(aws, "aws_darwin", "aws_linux-aarch64", "aws_linux-x86_64", "aws_toolchains")
+use_repo(aws, "aws", "aws_darwin", "aws_linux-aarch64", "aws_linux-x86_64", "aws_toolchains")
 
 oci = use_extension(
     "@rules_oci//oci:extensions.bzl",
