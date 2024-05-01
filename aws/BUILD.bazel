@@ -45,6 +45,7 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//aws/private:py_lambda",
+        "//aws/private:s3_sync",
         "@rules_oci//oci:defs",
         "@rules_python//python:defs_bzl",
     ],

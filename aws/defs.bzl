@@ -3,6 +3,9 @@
 load("@rules_oci//oci:defs.bzl", "oci_image")
 load("@rules_python//python:defs.bzl", "py_binary")
 load("//aws/private:py_lambda.bzl", "py_lambda_tars")
+load("//aws/private:s3_sync.bzl", _s3_sync = "s3_sync")
+
+s3_sync = _s3_sync
 
 def aws_py_lambda(name, entry_point = "lambda_function.py", deps = [], base = "@aws_lambda_python"):
     """Defines a Lambda run on the Python runtime.
