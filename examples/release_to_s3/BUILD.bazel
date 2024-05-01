@@ -1,0 +1,23 @@
+load("@aspect_bazel_lib//lib:expand_template.bzl", "expand_template")
+load("@aspect_rules_aws//aws:defs.bzl", "s3_sync")
+
+# Allow the destination bucket to vary depending on the stamp information
+expand_template(
+    name = "release_bucket",
+    out = "bucket.txt",
+    # as an example, use the --embed_label flag to choose a destination bucket, e.g.
+    # bazel run --stamp --embed_label=prod123 //my:s3_sync
+    # will sync to myorg-prod123-bucket
+    stamp_substitutions = {"dev": "{{BUILD_EMBED_LABEL}}"},
+    # unstamped builds will release to the "dev" bucket
+    template = ["myorg-dev-bucket"],
+)
+
+# Example usages:
+# Dry run: show what files would be copied
+#  bazel run //examples/release_to_s3 -- --dry_run
+s3_sync(
+    name = "release_to_s3",
+    srcs = ["my_file.txt"],
+    bucket = ":release_bucket",
+)

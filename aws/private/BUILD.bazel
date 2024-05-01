@@ -1,5 +1,7 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
+exports_files(["s3_sync.sh"])
+
 bzl_library(
     name = "toolchains_repo",
     srcs = ["toolchains_repo.bzl"],
@@ -24,5 +26,11 @@ bzl_library(
         "py_lambda.bzl",
         "@rules_pkg//pkg:bzl_srcs",
     ],
+    visibility = ["//aws:__subpackages__"],
+)
+
+bzl_library(
+    name = "s3_sync",
+    srcs = ["s3_sync.bzl"],
     visibility = ["//aws:__subpackages__"],
 )
