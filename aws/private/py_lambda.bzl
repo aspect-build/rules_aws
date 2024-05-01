@@ -1,4 +1,5 @@
 "Rule to produce tar files with py_binary deps and app"
+
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 
 # Write these two separate layers, so application changes are a small delta when pushing to a registry
@@ -30,6 +31,7 @@ def _mtree_line(file, type, content = None, uid = "0", gid = "0", time = "167256
 
 def _py_lambda_tar_impl(ctx):
     deps = ctx.attr.target[DefaultInfo].default_runfiles.files
+
     # NB: this creates one of the parent directories, but others are implicit; tar will create them on extract
     mtree = [_mtree_line(ctx.attr.prefix, type = "dir")]
 
