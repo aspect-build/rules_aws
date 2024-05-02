@@ -16,8 +16,11 @@ expand_template(
 # Example usages:
 # Dry run: show what files would be copied
 #  bazel run //examples/release_to_s3 -- --dry_run
+# Use a different profile:
+#  bazel run //examples/release_to_s3 -- --profile=prod
 s3_sync(
     name = "release_to_s3",
     srcs = ["my_file.txt"],
     bucket = ":release_bucket",
+    role = "arn:aws:iam::250292866473:role/AspectEngineering",
 )
