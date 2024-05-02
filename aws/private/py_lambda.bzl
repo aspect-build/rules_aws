@@ -16,7 +16,7 @@ def _short_path(file_):
     return short_path
 
 # Copied from aspect-bazel-lib/lib/private/tar.bzl
-def _mtree_line(file, type, content = None, uid = "0", gid = "0", time = "1672560000", mode = "0755"):
+def _mtree_line(file, type, content = None, uid = "0", gid = "0", time = "1672560000", mode = "0644"):
     spec = [
         file,
         "uid=" + uid,
@@ -32,8 +32,8 @@ def _mtree_line(file, type, content = None, uid = "0", gid = "0", time = "167256
 def _py_lambda_tar_impl(ctx):
     deps = ctx.attr.target[DefaultInfo].default_runfiles.files
 
-    # NB: this creates one of the parent directories, but others are implicit; tar will create them on extract
-    mtree = [_mtree_line(ctx.attr.prefix, type = "dir")]
+    # NB: this creates one of the parent directories, but others are implicit
+    mtree = [_mtree_line(ctx.attr.prefix, type = "dir", mode = "0755")]
 
     for dep in deps.to_list():
         short_path = _short_path(dep)
