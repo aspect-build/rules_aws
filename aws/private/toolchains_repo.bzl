@@ -64,20 +64,11 @@ selects.config_setting_group(
 )
 
 alias(
-    name = "tar_bin",
+    name = "aws_cli_layer",
     actual = select({{
-        "@platforms//os:macos": "@{repo_name}_darwin//installed:bin_files",
-        ":linux_x86_64": "@{repo_name}_linux-x86_64//installed:bin_files",
-        ":linux_arm64": "@{repo_name}_linux-aarch64//installed:bin_files",
-    }}),
-)
-
-alias(
-    name = "tar_files",
-    actual = select({{
-        "@platforms//os:macos": "@{repo_name}_darwin//installed:files",
-        ":linux_x86_64": "@{repo_name}_linux-x86_64//installed:files",
-        ":linux_arm64": "@{repo_name}_linux-aarch64//installed:files",
+        "@platforms//os:macos": "@{repo_name}_darwin//installed:aws_cli_layer",
+        ":linux_x86_64": "@{repo_name}_linux-x86_64//installed:aws_cli_layer",
+        ":linux_arm64": "@{repo_name}_linux-aarch64//installed:aws_cli_layer",
     }}),
 )
 

@@ -24,7 +24,7 @@ bzl_library(
     name = "py_lambda",
     srcs = [
         "py_lambda.bzl",
-        "@rules_pkg//pkg:bzl_srcs",
+        "@aspect_bazel_lib//lib:tar",
     ],
     visibility = ["//aws:__subpackages__"],
 )
