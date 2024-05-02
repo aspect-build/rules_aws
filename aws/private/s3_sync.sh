@@ -3,6 +3,7 @@
 # Copyright 2022 Aspect Build Systems, Inc.
 #
 # s3 cp/sync script intended for use with s3_sync rule
+# Copied from aspect-internal monorepo: bazel/release/copy_artifacts_to_bucket.sh
 
 set -o errexit -o nounset -o pipefail
 
@@ -73,7 +74,6 @@ Options:
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
-  --sync_archive          Rather than copy an archive file, unpack it and sync the contents.
 
 Arguments:
   <artifact>              The path to a file which will be copied to the S3 bucket.
@@ -90,17 +90,6 @@ cp_artifact() {
         for f in "${artifact}"/*; do
             cp_artifact "${f}" "${bucket}"
         done
-    elif [[ "${sync_archive:-}" ]]; then
-        if [[ "${dry_run}" == "false" ]]; then
-            warn "Syncing ${artifact} to ${bucket}"
-            local untar
-            untar=$(mktemp -d)
-            tar -xf "${artifact}" -C "${untar}"
-            # shellcheck disable=SC2154
-            "$aws" s3 sync "${untar}" "${bucket}"
-        else
-            warn "[DRY RUN] Would sync ${artifact} to ${bucket}"
-        fi
     else
         local dst
         dst="${bucket}/$(basename "${artifact}")"
@@ -137,10 +126,6 @@ while (("$#")); do
         ;;
     "--nodry_run")
         dry_run="false"
-        shift 1
-        ;;
-    "--sync_archive")
-        sync_archive="true"
         shift 1
         ;;
     "--role")

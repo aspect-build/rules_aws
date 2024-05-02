@@ -17,6 +17,9 @@ _ATTRS = {
         allow_single_file = True,
         mandatory = True,
     ),
+    "role": attr.string(
+        doc = "Assume this role before copying files, using `aws sts assume-role`",
+    ),
     "aws": attr.label(
         doc = "AWS CLI",
         default = Label("@aws"),
@@ -29,6 +32,9 @@ _ATTRS = {
 
 def _s3_sync_impl(ctx):
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
+    vars = ["bucket_file=\"{}\"".format(ctx.file.bucket.short_path)]
+    if ctx.attr.role:
+        vars.append("role=\"{}\"".format(ctx.attr.role))
     ctx.actions.expand_template(
         template = ctx.file._sync_script,
         output = executable,
@@ -36,7 +42,7 @@ def _s3_sync_impl(ctx):
         substitutions = {
             "$aws": ctx.attr.aws[DefaultInfo].default_runfiles.files.to_list()[0].short_path,
             "artifacts=()": "artifacts=({})".format(" ".join([s.short_path for s in ctx.files.srcs])),
-            "# Process Arguments": "bucket_file=\"{}\"".format(ctx.file.bucket.short_path),
+            "# Collect Args": "\n".join(vars),
         },
     )
     return [DefaultInfo(
