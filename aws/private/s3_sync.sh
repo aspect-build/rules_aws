@@ -199,7 +199,7 @@ if [[ ! -z "${role:-}" && "${dry_run}" == "false" ]]; then
     msg "Assuming role '${role}' before sync"
     # shellcheck disable=SC2183,SC2046
     export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
-        $("$aws" sts assume-role --role-arn "${role}" --role-session-name S3Releaser --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text))
+        $("$aws" sts assume-role --role-arn "${role}" --role-session-name S3Sync --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text))
 
 fi
 
