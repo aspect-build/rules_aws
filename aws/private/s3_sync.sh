@@ -72,8 +72,8 @@ EOF
 Options:
   --bucket                The name of the S3 bucket.
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
-  --prefix <prefix>       Prefix to prepend to artifact names when copying to S3.
-  --prefix_file <prefix>  The path to a file that contains the prefix to prepend to artifact names when copying to S3.
+  --prefix                Prefix to prepend to artifact names when copying to S3.
+  --prefix_file <file>    The path to a file that contains the prefix to prepend to artifact names when copying to S3.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
 
