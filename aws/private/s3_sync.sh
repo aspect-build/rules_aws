@@ -74,6 +74,7 @@ Options:
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
+  --prefix <prefix>       Prefix to prepend to artifact names when copying to S3.
 
 Arguments:
   <artifact>              The path to a file which will be copied to the S3 bucket.
@@ -84,15 +85,18 @@ EOF
 cp_artifact() {
     local artifact="${1}"
     local bucket="${2}"
+    local prefix="${3:-}"
 
     if [ -d "${artifact}" ]; then
         # Always flatten directories
         for f in "${artifact}"/*; do
-            cp_artifact "${f}" "${bucket}"
+            cp_artifact "${f}" "${bucket}" "${prefix}"
         done
     else
         local dst
-        dst="${bucket}/$(basename "${artifact}")"
+        local filename
+        filename=$(basename "${artifact}")
+        dst="${bucket}/${prefix}${filename}"
         if [[ "${dry_run}" == "false" ]]; then
             warn "Copying ${artifact} to ${dst}"
             "$aws" s3 cp "${artifact}" "${dst}"
@@ -106,6 +110,7 @@ cp_artifact() {
 
 dry_run=false
 artifacts=()
+prefix=""
 
 while (("$#")); do
     case "${1}" in
@@ -134,6 +139,10 @@ while (("$#")); do
         ;;
     "--profile")
         export AWS_PROFILE="${2}"
+        shift 2
+        ;;
+    "--prefix")
+        prefix="${2}"
         shift 2
         ;;
     --*)
@@ -193,7 +202,7 @@ fi
 msg "Copying the following artifacts to ${bucket}:" "${artifacts[@]}" ""
 
 for artifact in "${artifacts[@]}"; do
-    cp_artifact "${artifact}" "${bucket}"
+    cp_artifact "${artifact}" "${bucket}" "${prefix}"
 done
 
 # shellcheck disable=SC2236
