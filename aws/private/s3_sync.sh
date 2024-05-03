@@ -95,9 +95,7 @@ cp_artifact() {
         done
     else
         local dst
-        local filename
-        filename=$(basename "${artifact}")
-        dst="${bucket}/${prefix}${filename}"
+        dst="${bucket}/${prefix}$(basename "${artifact}")"
         if [[ "${dry_run}" == "false" ]]; then
             warn "Copying ${artifact} to ${dst}"
             "$aws" s3 cp "${artifact}" "${dst}"
