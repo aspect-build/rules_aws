@@ -17,7 +17,7 @@ _ATTRS = {
         allow_single_file = True,
         mandatory = True,
     ),
-    "prefix": attr.string(
+    "prefix": attr.label(
         doc = "file containting a single line: Prefix to prepend to artifact names when copying to S3",
         allow_single_file = True,
         mandatory = False,
@@ -38,8 +38,8 @@ _ATTRS = {
 def _s3_sync_impl(ctx):
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
     vars = ["bucket_file=\"{}\"".format(ctx.file.bucket.short_path)]
-    if ctx.attr.prefix:
-        vars.append("prefix_file=\"{}\"".format(ctx.attr.prefix))
+    if ctx.file.prefix:
+        vars.append("prefix_file=\"{}\"".format(ctx.file.prefix.short_path))
     if ctx.attr.role:
         vars.append("role=\"{}\"".format(ctx.attr.role))
     ctx.actions.expand_template(
@@ -54,7 +54,7 @@ def _s3_sync_impl(ctx):
     )
     return [DefaultInfo(
         executable = executable,
-        runfiles = ctx.runfiles(files = [executable, ctx.file.bucket] + ctx.files.srcs).merge(ctx.attr.aws[DefaultInfo].default_runfiles),
+        runfiles = ctx.runfiles(files = [executable, ctx.file.bucket] + ([ctx.file.prefix] if ctx.file.prefix else []) + ctx.files.srcs).merge(ctx.attr.aws[DefaultInfo].default_runfiles),
     )]
 
 s3_sync = rule(

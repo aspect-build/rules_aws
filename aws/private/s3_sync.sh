@@ -168,8 +168,6 @@ done
 
 [[ -n "${prefix_file:-}" ]] && prefix="$(<"${prefix_file}")"
 
-[[ -n "${prefix:-}" ]] || usage_error "Missing value for 'prefix'."
-
 protocol="s3"
 
 [[ "${bucket}" =~ ^${protocol}:// ]] || bucket="${protocol}://${bucket}"
