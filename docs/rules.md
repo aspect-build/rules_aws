@@ -23,6 +23,7 @@ Intended for use with `bazel run`, and with Aspect's Continuous Delivery feature
 | <a id="s3_sync-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
 | <a id="s3_sync-aws"></a>aws |  AWS CLI   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>@aws//:aws</code> |
 | <a id="s3_sync-bucket"></a>bucket |  file containing a single line: the S3 bucket to copy to   | <a href="https://bazel.build/concepts/labels">Label</a> | required |  |
+| <a id="s3_sync-prefix"></a>prefix |  file containing a single line: Prefix to prepend to artifact names when copying to S3   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  |
 | <a id="s3_sync-role"></a>role |  Assume this role before copying files, using <code>aws sts assume-role</code>   | String | optional | <code>""</code> |
 | <a id="s3_sync-srcs"></a>srcs |  Files to copy to the s3 bucket   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
 
