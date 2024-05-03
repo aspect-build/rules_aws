@@ -3,14 +3,14 @@ load("@aspect_rules_aws//aws:defs.bzl", "s3_sync")
 
 # Allow the destination bucket to vary depending on the stamp information
 expand_template(
-    name = "release_bucket",
+    name = "release_destination",
     out = "bucket.txt",
     # as an example, use the --embed_label flag to choose a destination bucket, e.g.
     # bazel run --stamp --embed_label=prod123 //my:s3_sync
-    # will sync to myorg-prod123-bucket
+    # will sync to myorg-prod123-bucket/nested/path
     stamp_substitutions = {"dev": "{{BUILD_EMBED_LABEL}}"},
-    # unstamped builds will release to the "dev" bucket
-    template = ["myorg-dev-bucket"],
+    # unstamped builds will release nested/path/* in the "dev" bucket
+    template = ["myorg-dev-bucket/nested/path"],
 )
 
 # Example usages:
@@ -21,6 +21,12 @@ expand_template(
 s3_sync(
     name = "release_to_s3",
     srcs = ["my_file.txt"],
-    bucket = ":release_bucket",
+    bucket_file = ":release_destination",
     role = "arn:aws:iam::250292866473:role/AspectEngineering",
+)
+
+s3_sync(
+    name = "release_to_fixed_path",
+    srcs = ["my_file.txt"],
+    bucket = "my-bucket-name/sub-folder",
 )
