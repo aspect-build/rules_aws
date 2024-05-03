@@ -72,9 +72,10 @@ EOF
 Options:
   --bucket                The name of the S3 bucket.
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
+  --prefix <prefix>       Prefix to prepend to artifact names when copying to S3.
+  --prefix_file <prefix>  The path to a file that contains the prefix to prepend to artifact names when copying to S3.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
-  --prefix <prefix>       Prefix to prepend to artifact names when copying to S3.
 
 Arguments:
   <artifact>              The path to a file which will be copied to the S3 bucket.
@@ -145,6 +146,10 @@ while (("$#")); do
         prefix="${2}"
         shift 2
         ;;
+    "--prefix_file")
+        prefix_file="${2}"
+        shift 2
+        ;;
     --*)
         usage_error "Unrecognized flag. ${1}"
         ;;
@@ -160,6 +165,10 @@ done
 [[ -n "${bucket_file:-}" ]] && bucket="$(<"${bucket_file}")"
 
 [[ -n "${bucket:-}" ]] || usage_error "Missing value for 'bucket'."
+
+[[ -n "${prefix_file:-}" ]] && prefix="$(<"${prefix_file}")"
+
+[[ -n "${prefix:-}" ]] || usage_error "Missing value for 'prefix'."
 
 protocol="s3"
 
