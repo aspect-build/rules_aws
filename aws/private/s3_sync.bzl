@@ -18,8 +18,8 @@ _ATTRS = {
         mandatory = True,
     ),
     "prefix": attr.string(
-        doc = "Prefix to prepend to artifact names when copying to S3",
-        default = "",
+        doc = "file containting a single line: Prefix to prepend to artifact names when copying to S3",
+        allow_single_file = True,
         mandatory = False,
     ),
     "role": attr.string(
@@ -37,10 +37,9 @@ _ATTRS = {
 
 def _s3_sync_impl(ctx):
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
-    vars = [
-        "bucket_file=\"{}\"".format(ctx.file.bucket.short_path),
-        "prefix=\"{}\"".format(ctx.attr.prefix),
-    ]
+    vars = ["bucket_file=\"{}\"".format(ctx.file.bucket.short_path)]
+    if ctx.attr.prefix:
+        vars.append("prefix_file=\"{}\"".format(ctx.attr.prefix))
     if ctx.attr.role:
         vars.append("role=\"{}\"".format(ctx.attr.role))
     ctx.actions.expand_template(
