@@ -13,6 +13,18 @@ expand_template(
     template = ["myorg-dev-bucket"],
 )
 
+# Allow the destination prefix to vary depending on the stamp information
+expand_template(
+    name = "release_prefix",
+    out = "prefix.txt",
+    # as an example, use if you have the STABLE_RELEASE_PREFIX value being generated to a value of "prod789" in your workspace status script, then
+    # bazel run --stamp //my:s3_sync
+    # will sync to prefix-prod789/ prefix
+    stamp_substitutions = {"dev": "{{STABLE_RELEASE_PREFIX}}"},
+    # unstamped builds will release to the "prefix-dev" prefix
+    template = ["prefix-dev/"],
+)
+
 # Example usages:
 # Dry run: show what files would be copied
 #  bazel run //examples/release_to_s3 -- --dry_run
@@ -22,5 +34,6 @@ s3_sync(
     name = "release_to_s3",
     srcs = ["my_file.txt"],
     bucket = ":release_bucket",
+    prefix = ":release_prefix",
     role = "arn:aws:iam::250292866473:role/AspectEngineering",
 )
