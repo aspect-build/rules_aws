@@ -156,6 +156,9 @@ aws_repositories = repository_rule(
     attrs = _ATTRS,
 )
 
+def _is_bazel_6_or_greater():
+    return "apple_binary" not in dir(native)
+
 def _aws_alias_impl(rctx):
     rctx.file("BUILD.bazel", """\
 load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
@@ -164,16 +167,16 @@ native_binary(
     name = "aws",
     src = select(
         {{
-            "@bazel_tools//src/conditions:linux_x86_64": "@@{0}_linux-x86_64//:aws",
-            "@bazel_tools//src/conditions:linux_aarch64": "@@{0}_linux-aarch64//:aws",
-            "@bazel_tools//src/conditions:darwin_x86_64": "@@{0}_darwin//:aws",
-            "@bazel_tools//src/conditions:darwin_arm64": "@@{0}_darwin//:aws",
+            "@bazel_tools//src/conditions:linux_x86_64": "{0}_linux-x86_64//:aws",
+            "@bazel_tools//src/conditions:linux_aarch64": "{0}_linux-aarch64//:aws",
+            "@bazel_tools//src/conditions:darwin_x86_64": "{0}_darwin//:aws",
+            "@bazel_tools//src/conditions:darwin_arm64": "{0}_darwin//:aws",
         }},
     ),
     out = "aws",
     visibility = ["//visibility:public"],
 )
-""".format(rctx.name))
+""".format(("@@" if _is_bazel_6_or_greater() else "@") + rctx.name))
 
 aws_alias = repository_rule(
     _aws_alias_impl,
