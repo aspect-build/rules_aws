@@ -17,7 +17,7 @@ bazel_dep(name = "rules_python", version = "0.29.0")
 # Development dependencies which are not exposed to users
 bazel_dep(name = "aspect_rules_py", version = "0.7.3", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.4.0", dev_dependency = True)
-bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
+bazel_dep(name = "container_structure_test", version = "1.19.1", dev_dependency = True)
 
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
