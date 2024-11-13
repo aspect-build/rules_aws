@@ -19,6 +19,11 @@ _ATTRS = {
         doc = "file containing a single line: the S3 path to copy to. Useful because the file content may be stamped.",
         allow_single_file = True,
     ),
+    "destination_uri_file": attr.label(
+        doc = """Only permitted when copying a single src file. A file containing a single line:
+            the full [S3Uri](https://docs.aws.amazon.com/cli/latest/reference/s3/#path-argument-type) to copy the file to.""",
+        allow_single_file = True,
+    ),
     "role": attr.string(
         doc = "Assume this role before copying files, using `aws sts assume-role`",
     ),
@@ -36,15 +41,18 @@ def _s3_sync_impl(ctx):
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
     runfiles = [executable] + ctx.files.srcs
     vars = []
-    if not ctx.attr.bucket and not ctx.attr.bucket_file:
-        fail("Either 'bucket' or 'bucket_file' must be set")
-    if ctx.attr.bucket and ctx.attr.bucket_file:
-        fail("At most one of 'bucket' or 'bucket_file' may be set")
+    if int(bool(ctx.attr.bucket)) + int(bool(ctx.attr.bucket_file)) + int(bool(ctx.attr.destination_uri_file)) != 1:
+        fail("Exactly one of 'bucket', 'bucket_file', or 'destination_uri_file' must be set")
     if ctx.attr.bucket_file:
         vars.append("bucket_file=\"{}\"".format(ctx.file.bucket_file.short_path))
         runfiles.append(ctx.file.bucket_file)
-    else:
+    elif ctx.attr.bucket:
         vars.append("bucket=\"{}\"".format(ctx.attr.bucket))
+    else:
+        if len(ctx.files.srcs) > 1:
+            fail("Only one source file may be copied using destination_uri_file")
+        vars.append("destination_uri_file=\"{}\"".format(ctx.file.destination_uri_file.short_path))
+        runfiles.append(ctx.file.destination_uri_file)
     if ctx.attr.role:
         vars.append("role=\"{}\"".format(ctx.attr.role))
     ctx.actions.expand_template(
