@@ -76,9 +76,21 @@ Options:
                           Default: false
 
 Arguments:
-  <artifact>              The path to a file which will be copied to the S3 bucket.
+  <artifact>              The path to a file or directory which will be copied to the S3 bucket.
                           One or more artifacts can be specified.
 EOF
+}
+
+s3_cp() {
+    local src="${1}"
+    local dst="${2}"
+
+    if [[ "${dry_run}" == "false" ]]; then
+        warn "Copying ${src} to ${dst}"
+        "$aws" s3 cp "${src}" "${dst}"
+    else
+        warn "[DRY RUN] Would copy ${src} to ${dst}"
+    fi
 }
 
 cp_artifact() {
@@ -91,14 +103,7 @@ cp_artifact() {
             cp_artifact "${f}" "${bucket}"
         done
     else
-        local dst
-        dst="${bucket}/$(basename "${artifact}")"
-        if [[ "${dry_run}" == "false" ]]; then
-            warn "Copying ${artifact} to ${dst}"
-            "$aws" s3 cp "${artifact}" "${dst}"
-        else
-            warn "[DRY RUN] Would copy ${artifact} to ${dst}"
-        fi
+        s3_cp "${artifact}" "${bucket}/$(basename "${artifact}")"
     fi
 }
 
@@ -118,6 +123,10 @@ while (("$#")); do
         ;;
     "--bucket_file")
         bucket_file="${2}"
+        shift 2
+        ;;
+    "--destination_uri_file")
+        destination_uri_file="${2}"
         shift 2
         ;;
     "--dry_run")
@@ -148,15 +157,20 @@ done
 
 # Process Arguments
 
-[[ -n "${bucket_file:-}" ]] && bucket="$(<"${bucket_file}")"
-
-[[ -n "${bucket:-}" ]] || usage_error "Missing value for 'bucket'."
-
-protocol="s3"
-
-[[ "${bucket}" =~ ^${protocol}:// ]] || bucket="${protocol}://${bucket}"
-
 [[ ${#artifacts[@]} -gt 0 ]] || usage_error "No artifacts were specified."
+
+if [[ ! -z "${destination_uri_file}" ]]; then
+    [[ ${#artifacts[@]} -eq 1 ]] || usage_error "destination_uri_file may be used only with a single artifact to copy"
+else
+    [[ -n "${bucket_file:-}" ]] && bucket="$(<"${bucket_file}")"
+
+    [[ -n "${bucket:-}" ]] || usage_error "Missing value for 'bucket'."
+
+    # Syntax sugar: append s3:// protocol to bucket URI if absent
+    protocol="s3"
+
+    [[ "${bucket}" =~ ^${protocol}:// ]] || bucket="${protocol}://${bucket}"
+fi
 
 [[ "${dry_run}" == "true" ]] &&
     warn <<-'EOF'
@@ -190,11 +204,14 @@ fi
 
 # Copy artifacts
 
-msg "Copying the following artifacts to ${bucket}:" "${artifacts[@]}" ""
-
-for artifact in "${artifacts[@]}"; do
-    cp_artifact "${artifact}" "${bucket}"
-done
+if [[ ! -z "${destination_uri_file}" ]]; then
+    s3_cp "${artifacts[0]}" "$(<"${destination_uri_file}")"
+else
+    msg "Copying the following artifacts to ${bucket}:" "${artifacts[@]}" ""
+    for artifact in "${artifacts[@]}"; do
+        cp_artifact "${artifact}" "${bucket}"
+    done
+fi
 
 # shellcheck disable=SC2236
 if [[ ! -z "${role:-}" && "${dry_run}" == "false" ]]; then

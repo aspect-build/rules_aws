@@ -30,3 +30,25 @@ s3_sync(
     srcs = ["my_file.txt"],
     bucket = "my-bucket-name/sub-folder",
 )
+
+##############
+# Use case: Copy one file to an exact S3 URI that varies depending on stamping
+# See https://github.com/aspect-build/rules_aws/issues/83
+destination_uri_file = "dst.txt"
+
+expand_template(
+    name = "destination_uri_file",
+    out = destination_uri_file,
+    # as an example, use the --embed_label flag to choose a destination file, e.g.
+    # bazel run --stamp --embed_label=prod123 //my:s3_sync
+    # will sync my_file.txt to myorg-bucket/prod123.txt
+    stamp_substitutions = {"default": "{{BUILD_EMBED_LABEL}}"},
+    # unstamped builds will release my_file.txt to myorg-bucket/default.txt
+    template = ["s3://myorg-bucket/default.txt"],
+)
+
+s3_sync(
+    name = "release_to_stamped_filename",
+    srcs = ["my_file.txt"],
+    destination_uri_file = destination_uri_file,
+)
