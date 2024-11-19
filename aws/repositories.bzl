@@ -87,7 +87,8 @@ def _install_linux(rctx, release_info):
 
 def _install_darwin(rctx, release_info):
     rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.pkg")
-    result = rctx.execute(["pkgutil", "--expand-full", "AWSCLI.pkg", "installed"])
+    # NB: don't expect pkgutil on the PATH, users may run with --repo_env and /usr/sbin no longer appears
+    result = rctx.execute(["/usr/sbin/pkgutil", "--expand-full", "AWSCLI.pkg", "installed"])
     if result.return_code:
         _cli_install_error(result)
     dist_dir = "aws-cli.pkg/Payload/aws-cli"
