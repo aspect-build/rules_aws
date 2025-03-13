@@ -159,7 +159,7 @@ done
 
 [[ ${#artifacts[@]} -gt 0 ]] || usage_error "No artifacts were specified."
 
-if [[ ! -z "${destination_uri_file}" ]]; then
+if [[ ! -z "${destination_uri_file:-}" ]]; then
     [[ ${#artifacts[@]} -eq 1 ]] || usage_error "destination_uri_file may be used only with a single artifact to copy"
 else
     [[ -n "${bucket_file:-}" ]] && bucket="$(<"${bucket_file}")"
@@ -204,7 +204,7 @@ fi
 
 # Copy artifacts
 
-if [[ ! -z "${destination_uri_file}" ]]; then
+if [[ ! -z "${destination_uri_file:-}" ]]; then
     s3_cp "${artifacts[0]}" "$(<"${destination_uri_file}")"
 else
     msg "Copying the following artifacts to ${bucket}:" "${artifacts[@]}" ""
