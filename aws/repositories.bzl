@@ -130,6 +130,8 @@ package(default_visibility=["//visibility:public"])
 
 _SRCS = glob(["{v}/**"])
 
+exports_files(_SRCS)
+
 mtree_spec(
     name = "mtree",
     srcs = _SRCS,
