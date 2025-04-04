@@ -32,8 +32,8 @@ def _toolchain_extension(module_ctx):
                 This prevents conflicting registrations in the global namespace of external repos.
                 """)
             if toolchain.name not in registrations.keys():
-                registrations[toolchain.name] = []
-            registrations[toolchain.name].append(toolchain.aws_cli_version)
+                registrations[toolchain.name] = set()
+            registrations[toolchain.name].add(toolchain.aws_cli_version)
     for name, versions in registrations.items():
         if len(versions) > 1:
             # TODO: should be semver-aware, using MVS
@@ -42,7 +42,7 @@ def _toolchain_extension(module_ctx):
             # buildifier: disable=print
             print("NOTE: aws toolchain {} has multiple versions {}, selected {}".format(name, versions, selected))
         else:
-            selected = versions[0]
+            selected = versions.pop()
 
         aws_register_toolchains(
             name = name,
