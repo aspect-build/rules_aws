@@ -10,6 +10,7 @@ names (the latest version will be picked for each name) and can register them as
 effectively overriding the default named toolchain due to toolchain resolution precedence.
 """
 
+load("@bazel_skylib//lib:new_sets.bzl", "sets")
 load(":repositories.bzl", "aws_register_toolchains")
 
 _DEFAULT_NAME = "aws"
@@ -35,14 +36,15 @@ def _toolchain_extension(module_ctx):
                 registrations[toolchain.name] = []
             registrations[toolchain.name].append(toolchain.aws_cli_version)
     for name, versions in registrations.items():
-        if len(versions) > 1:
+        unique_versions = sets.to_list(sets.make(versions))
+        if len(unique_versions) > 1:
             # TODO: should be semver-aware, using MVS
-            selected = sorted(versions, reverse = True)[0]
+            selected = sorted(unique_versions, reverse = True)[0]
 
             # buildifier: disable=print
-            print("NOTE: aws toolchain {} has multiple versions {}, selected {}".format(name, versions, selected))
+            print("NOTE: aws toolchain {} has multiple versions {}, selected {}".format(name, unique_versions, selected))
         else:
-            selected = versions[0]
+            selected = unique_versions[0]
 
         aws_register_toolchains(
             name = name,
