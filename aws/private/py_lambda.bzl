@@ -46,6 +46,7 @@ def _py_lambda_tar_impl(ctx):
         path = ""
         for dir in ctx.attr.init_files.split("/"):
             path = path + "/" + dir
+            mtree.append(_mtree_line(ctx.attr.prefix + path, type = "dir", mode = "0755"))
             mtree.append(_mtree_line(ctx.attr.prefix + path + "/__init__.py", type = "file"))
 
     mtree.append("")
