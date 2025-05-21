@@ -70,7 +70,7 @@ def _install_linux(rctx, release_info):
         integrity = release_info["integrity"],
         stripPrefix = "aws",
     )
-    result = rctx.execute(["./install", "--install-dir", _CLI_INSTALL_PATH])
+    result = rctx.execute(["./install", "--install-dir", _CLI_INSTALL_PATH, "--bin-dir", "/dev/null"])
     if result.return_code:
         _cli_install_error(result)
 
