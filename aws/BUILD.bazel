@@ -48,6 +48,7 @@ bzl_library(
         "//aws/private:s3_sync",
         "@rules_oci//oci:defs",
         "@rules_python//python:defs_bzl",
+        "@tar.bzl//:tar",
     ],
 )
 
