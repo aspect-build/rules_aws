@@ -31,9 +31,9 @@ def rules_aws_dependencies():
     )
     http_archive(
         name = "aspect_bazel_lib",
-        sha256 = "6c25c59581041ede31e117693047f972cc4700c89acf913658dc89d04c338f8d",
-        strip_prefix = "bazel-lib-2.5.3",
-        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.5.3/bazel-lib-v2.5.3.tar.gz",
+        sha256 = "9a44f457810ce64ec36a244cc7c807607541ab88f2535e07e0bf2976ef4b73fe",
+        strip_prefix = "bazel-lib-2.19.4",
+        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.19.4/bazel-lib-v2.19.4.tar.gz",
     )
 
 ########
