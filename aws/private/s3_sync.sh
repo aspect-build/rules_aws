@@ -174,7 +174,7 @@ fi
 
 [[ "${dry_run}" == "true" ]] &&
     warn <<-'EOF'
-This is a dry run. No artifacts will be copied.  To copy artifacts, run
+This is a dry run. No artifacts will be copied. To copy artifacts, run
 with '--nodry_run'.
   bazel run --config=release //path/to/this:tool -- --nodry_run
 
