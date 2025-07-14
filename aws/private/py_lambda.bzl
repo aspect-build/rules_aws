@@ -29,24 +29,52 @@ def _mtree_line(file, type, content = None, uid = "0", gid = "0", time = "167256
         spec.append("content=" + content)
     return " ".join(spec)
 
+def _get_parent_dirs(path):
+    """Get all parent directories of a given path."""
+    dirs = []
+    parts = path.split("/")
+    for i in range(1, len(parts)):
+        dirs.append("/".join(parts[:i]))
+    return dirs
+
 def _py_lambda_tar_impl(ctx):
     deps = ctx.attr.target[DefaultInfo].default_runfiles.files
 
-    # NB: this creates one of the parent directories, but others are implicit
-    mtree = [_mtree_line(ctx.attr.prefix, type = "dir", mode = "0755")]
+    # Track created directories to avoid duplicates
+    created_dirs = set()
+    mtree = []
+
+    def _ensure_parent_dirs(file_path):
+        """Ensure all parent directories of file_path are created."""
+        parent_dirs = _get_parent_dirs(file_path)
+        for dir_path in parent_dirs:
+            if dir_path not in created_dirs:
+                created_dirs.add(dir_path)
+                mtree.append(_mtree_line(dir_path, type = "dir", mode = "0755"))
+
+    # Create the root prefix directory
+    _ensure_parent_dirs(ctx.attr.prefix)
+    created_dirs.add(ctx.attr.prefix)
+    mtree.append(_mtree_line(ctx.attr.prefix, type = "dir", mode = "0755"))
 
     for dep in deps.to_list():
         short_path = _short_path(dep)
         if dep.owner.workspace_name == "" and ctx.attr.kind == "app":
-            mtree.append(_mtree_line(ctx.attr.prefix + "/" + dep.short_path, type = "file", content = dep.path))
+            file_path = ctx.attr.prefix + "/" + dep.short_path
+            _ensure_parent_dirs(file_path)
+            mtree.append(_mtree_line(file_path, type = "file", content = dep.path))
         elif short_path.startswith("site-packages") and ctx.attr.kind == "deps":
-            mtree.append(_mtree_line(ctx.attr.prefix + short_path[len("site-packages"):], type = "file", content = dep.path))
+            file_path = ctx.attr.prefix + short_path[len("site-packages"):]
+            _ensure_parent_dirs(file_path)
+            mtree.append(_mtree_line(file_path, type = "file", content = dep.path))
 
     if ctx.attr.kind == "app" and ctx.attr.init_files:
         path = ""
         for dir in ctx.attr.init_files.split("/"):
             path = path + "/" + dir
-            mtree.append(_mtree_line(ctx.attr.prefix + path + "/__init__.py", type = "file"))
+            file_path = ctx.attr.prefix + path + "/__init__.py"
+            _ensure_parent_dirs(file_path)
+            mtree.append(_mtree_line(file_path, type = "file"))
 
     mtree.append("")
     ctx.actions.write(ctx.outputs.output, "\n".join(mtree))
