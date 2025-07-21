@@ -18,6 +18,8 @@ expand_template(
 #  bazel run //examples/release_to_s3 -- --dry_run
 # Use a different profile:
 #  bazel run //examples/release_to_s3 -- --profile=prod
+# Output a metadata JSON file:
+#  bazel run //examples/release_to_s3 -- --output_json $PWD/out.json
 s3_sync(
     name = "release_to_s3",
     srcs = ["my_file.txt"],

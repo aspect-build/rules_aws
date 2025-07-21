@@ -20,6 +20,16 @@ bazel_dep(name = "aspect_rules_py", version = "0.7.3", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "6.4.0", dev_dependency = True)
 bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
 
+bazel_lib_toolchains = use_extension("@aspect_bazel_lib//lib:extensions.bzl", "toolchains")
+bazel_lib_toolchains.jq()
+bazel_lib_toolchains.coreutils()
+use_repo(bazel_lib_toolchains, "coreutils_toolchains", "jq_toolchains")
+
+register_toolchains(
+    "@jq_toolchains//:all",
+    "@coreutils_toolchains//:all",
+)
+
 aws = use_extension("//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.13.0")
 use_repo(aws, "aws", "aws_darwin", "aws_linux-aarch64", "aws_linux-x86_64", "aws_toolchains")
