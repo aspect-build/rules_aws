@@ -38,8 +38,11 @@ _ATTRS = {
 }
 
 def _s3_sync_impl(ctx):
+    coreutils = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    jq = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
+
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
-    runfiles = [executable] + ctx.files.srcs
+    runfiles = [executable, coreutils.coreutils_info.bin, jq.jqinfo.bin] + ctx.files.srcs
     vars = []
     if int(bool(ctx.attr.bucket)) + int(bool(ctx.attr.bucket_file)) + int(bool(ctx.attr.destination_uri_file)) != 1:
         fail("Exactly one of 'bucket', 'bucket_file', or 'destination_uri_file' must be set")
@@ -61,6 +64,8 @@ def _s3_sync_impl(ctx):
         is_executable = True,
         substitutions = {
             "$aws": ctx.attr.aws[DefaultInfo].default_runfiles.files.to_list()[0].short_path,
+            "$coreutils": coreutils.coreutils_info.bin.short_path,
+            "$jq": jq.jqinfo.bin.short_path,
             "artifacts=()": "artifacts=({})".format(" ".join([s.short_path for s in ctx.files.srcs])),
             "# Collect Args": "\n".join(vars),
         },
@@ -76,4 +81,8 @@ s3_sync = rule(
     executable = True,
     attrs = _ATTRS,
     doc = _DOC,
+    toolchains = [
+        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@aspect_bazel_lib//lib:jq_toolchain_type",
+    ],
 )

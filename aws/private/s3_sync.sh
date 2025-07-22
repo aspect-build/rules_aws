@@ -74,6 +74,7 @@ Options:
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
+  --output_json <file>    Collect SHA256 sums/S3 destination for every file and write as JSON to the specified file.
 
 Arguments:
   <artifact>              The path to a file or directory which will be copied to the S3 bucket.
@@ -91,6 +92,11 @@ s3_cp() {
     else
         warn "[DRY RUN] Would copy ${src} to ${dst}"
     fi
+
+    if [[ -n "${output_json_file}" ]]; then
+        local sha256_sum=$("$coreutils" sha256sum "${src}" | cut -d' ' -f1)
+        sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'"}')
+    fi
 }
 
 cp_artifact() {
@@ -107,10 +113,18 @@ cp_artifact() {
     fi
 }
 
+output_json_results() {
+    local output_file="${1}"
+    printf '%s\n' "${sha256_results[@]}" | "$jq" -s . > "${output_file}"
+    msg "JSON output written to ${output_file}"
+}
+
 # Collect Args
 
 dry_run=false
+output_json_file=""
 artifacts=()
+sha256_results=()
 
 while (("$#")); do
     case "${1}" in
@@ -136,6 +150,10 @@ while (("$#")); do
     "--nodry_run")
         dry_run="false"
         shift 1
+        ;;
+    "--output_json")
+        output_json_file="${2}"
+        shift 2
         ;;
     "--role")
         role="${2}"
@@ -211,6 +229,10 @@ else
     for artifact in "${artifacts[@]}"; do
         cp_artifact "${artifact}" "${bucket}"
     done
+fi
+
+if [[ -n "${output_json_file}" ]]; then
+    output_json_results "${output_json_file}"
 fi
 
 # shellcheck disable=SC2236
