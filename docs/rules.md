@@ -21,7 +21,7 @@ Intended for use with `bazel run`, and with Aspect's Continuous Delivery feature
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="s3_sync-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
-| <a id="s3_sync-aws"></a>aws |  AWS CLI   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>@aws//:aws</code> |
+| <a id="s3_sync-aws"></a>aws |  AWS CLI   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>None</code> |
 | <a id="s3_sync-bucket"></a>bucket |  S3 path to copy to   | String | optional | <code>""</code> |
 | <a id="s3_sync-bucket_file"></a>bucket_file |  file containing a single line: the S3 path to copy to. Useful because the file content may be stamped.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>None</code> |
 | <a id="s3_sync-destination_uri_file"></a>destination_uri_file |  Only permitted when copying a single src file. A file containing a single line:             the full [S3Uri](https://docs.aws.amazon.com/cli/latest/reference/s3/#path-argument-type) to copy the file to.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>None</code> |
