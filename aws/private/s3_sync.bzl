@@ -29,7 +29,6 @@ _ATTRS = {
     ),
     "aws": attr.label(
         doc = "AWS CLI",
-        default = Label("@aws"),
     ),
     "_sync_script": attr.label(
         default = Label("//aws/private:s3_sync.sh"),
@@ -38,8 +37,16 @@ _ATTRS = {
 }
 
 def _s3_sync_impl(ctx):
+    aws_toolchain = ctx.toolchains["//aws:toolchain_type"]
     coreutils = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     jq = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
+
+    if ctx.attr.aws:
+        aws_tool_path = ctx.attr.aws[DefaultInfo].default_runfiles.files.to_list()[0].short_path
+        aws_runfiles = ctx.attr.aws[DefaultInfo].default_runfiles
+    else:
+        aws_tool_path = aws_toolchain.awsinfo.target_tool_path
+        aws_runfiles = ctx.runfiles(files = aws_toolchain.awsinfo.tool_files)
 
     executable = ctx.actions.declare_file("{}/s3_sync.sh".format(ctx.label.name))
     runfiles = [executable, coreutils.coreutils_info.bin, jq.jqinfo.bin] + ctx.files.srcs
@@ -63,7 +70,7 @@ def _s3_sync_impl(ctx):
         output = executable,
         is_executable = True,
         substitutions = {
-            "$aws": ctx.attr.aws[DefaultInfo].default_runfiles.files.to_list()[0].short_path,
+            "$aws": aws_tool_path,
             "$coreutils": coreutils.coreutils_info.bin.short_path,
             "$jq": jq.jqinfo.bin.short_path,
             "artifacts=()": "artifacts=({})".format(" ".join([s.short_path for s in ctx.files.srcs])),
@@ -73,7 +80,7 @@ def _s3_sync_impl(ctx):
 
     return [DefaultInfo(
         executable = executable,
-        runfiles = ctx.runfiles(files = runfiles).merge(ctx.attr.aws[DefaultInfo].default_runfiles),
+        runfiles = ctx.runfiles(files = runfiles).merge(aws_runfiles),
     )]
 
 s3_sync = rule(
@@ -82,6 +89,7 @@ s3_sync = rule(
     attrs = _ATTRS,
     doc = _DOC,
     toolchains = [
+        "//aws:toolchain_type",
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
         "@aspect_bazel_lib//lib:jq_toolchain_type",
     ],
