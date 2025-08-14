@@ -3,7 +3,7 @@ workspaces:
   .:
     tasks:
       - bazel-6:
-        without: true
+          without: true
   e2e/smoke:
 tasks:
   - test:
