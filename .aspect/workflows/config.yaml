@@ -1,7 +1,10 @@
 # See https://docs.aspect.build/v/workflows/config
 workspaces:
-  - .
-  - e2e/smoke
+  .:
+    tasks:
+      - bazel-6:
+        without: true
+  e2e/smoke:
 tasks:
   - test:
       name: Test (Bazel 6.x)
