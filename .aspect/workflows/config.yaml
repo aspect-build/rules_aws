@@ -1,0 +1,26 @@
+# See https://docs.aspect.build/v/workflows/config
+workspaces:
+  .:
+    tasks:
+      - bazel-6:
+          without: true
+  e2e/smoke:
+    icon: aws
+tasks:
+  - test:
+      name: Test (Bazel 6.x)
+      id: bazel-6
+      env:
+        USE_BAZEL_VERSION: 6.x
+  - test:
+      name: "Test (Bazel 7.x)"
+      id: bazel-7
+      env:
+        USE_BAZEL_VERSION: 7.x
+  - test:
+      name: "Test (Bazel 8.x)"
+      id: bazel-8
+      env:
+        USE_BAZEL_VERSION: 8.x
+notifications:
+  github: {}
