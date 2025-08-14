@@ -1,0 +1,8 @@
+# See https://docs.aspect.build/v/workflows/config
+workspaces:
+  - .
+  - e2e/smoke
+tasks:
+  - test:
+notifications:
+  github: {}
