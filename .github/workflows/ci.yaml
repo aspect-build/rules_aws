@@ -22,7 +22,8 @@ jobs:
         # Note: linux is tested on Buildkite via Aspect Workflows
         os:
           - macos-latest
-          - windows-latest
+          # TODO(alex): https://github.com/aspect-build/rules_aws/issues/14
+          # - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
