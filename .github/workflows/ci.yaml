@@ -17,21 +17,17 @@ concurrency:
 
 jobs:
   test:
-    uses: bazel-contrib/.github/.github/workflows/bazel.yaml@v6
-    with:
-      folders: |
-        [
-          ".",
-          "e2e/smoke"
-        ]
-      exclude: |
-        [
-          {"folder": ".", "bzlmodEnabled": false},
-          {"bazelversion": "5.4.0", "bzlmodEnabled": true},
-          {"bazelversion": "5.4.0", "os": "macos-latest"},
-        ]
-      exclude_windows: true
-
+    strategy:
+      matrix:
+        # Note: linux is tested on Buildkite via Aspect Workflows
+        os:
+          - macos-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bazel-contrib/setup-bazel@0.15.0
+      - run: bazel test //...
   run_cli:
     runs-on: ubuntu-latest
     steps:
