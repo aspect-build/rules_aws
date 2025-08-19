@@ -2,7 +2,6 @@
 
 module(
     name = "aspect_rules_aws",
-    version = "0.0.0",
     compatibility_level = 1,
 )
 
