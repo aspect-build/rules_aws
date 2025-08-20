@@ -1,6 +1,6 @@
 "Rule to produce tar files with py_binary deps and app"
 
-load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@tar.bzl", "tar")
 
 # Write these two separate layers, so application changes are a small delta when pushing to a registry
 _LAYERS = ["app", "deps"]
