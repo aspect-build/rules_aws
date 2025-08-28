@@ -14,7 +14,6 @@ load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: di
 load("@bazel_skylib//lib:new_sets.bzl", "sets")
 load(":repositories.bzl", "aws_register_toolchains")
 
-
 _DEFAULT_NAME = "aws"
 
 aws_toolchain = tag_class(attrs = {
