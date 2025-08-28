@@ -25,3 +25,7 @@ For example to use commit `abc123`:
 
 Aspect plans to open-source our internal AWS support from our private monorepo.
 These features are documented in the issue tracker.
+
+# Telemetry & privacy policy
+
+This ruleset collects limited usage data via [`tools_telemetry`](https://github.com/aspect-build/tools_telemetry), which is reported to Aspect Build Inc and governed by our [privacy policy](https://www.aspect.build/privacy-policy).
