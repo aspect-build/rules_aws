@@ -88,9 +88,12 @@ s3_cp() {
 
     if [[ "${dry_run}" == "false" ]]; then
         warn "Copying ${src} to ${dst}"
-        "$aws" s3 cp "${src}" "${dst}"
+        "$aws" s3 cp "${s3_args[@]}" "${src}" "${dst}"
     else
         warn "[DRY RUN] Would copy ${src} to ${dst}"
+        if [[ "${#s3_args[@]}" -gt 0 ]]; then
+            warn "[DRY RUN] with args: ${s3_args[*]}"
+        fi
     fi
 
     if [[ -n "${output_json_file}" ]]; then
@@ -124,6 +127,7 @@ output_json_results() {
 dry_run=false
 output_json_file=""
 artifacts=()
+s3_args=()
 sha256_results=()
 
 while (("$#")); do

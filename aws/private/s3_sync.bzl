@@ -27,6 +27,10 @@ _ATTRS = {
     "role": attr.string(
         doc = "Assume this role before copying files, using `aws sts assume-role`",
     ),
+    "s3_args": attr.string_list(
+        doc = "Additional arguments to pass to the aws s3 cp command",
+        default = [],
+    ),
     "aws": attr.label(
         doc = "AWS CLI",
     ),
@@ -74,6 +78,7 @@ def _s3_sync_impl(ctx):
             "$coreutils": coreutils.coreutils_info.bin.short_path,
             "$jq": jq.jqinfo.bin.short_path,
             "artifacts=()": "artifacts=({})".format(" ".join([s.short_path for s in ctx.files.srcs])),
+            "s3_args=()": "s3_args=({})".format(" ".join(ctx.attr.s3_args)),
             "# Collect Args": "\n".join(vars),
         },
     )
