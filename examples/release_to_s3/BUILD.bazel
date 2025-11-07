@@ -33,6 +33,14 @@ s3_sync(
     bucket = "my-bucket-name/sub-folder",
 )
 
+# s3_args can be used to pass options to aws s3 cp
+s3_sync(
+    name = "release_with_args",
+    srcs = ["my_file.txt"],
+    bucket = "my-bucket-name/sub-folder",
+    s3_args = ["--sse"],
+)
+
 ##############
 # Use case: Copy one file to an exact S3 URI that varies depending on stamping
 # See https://github.com/aspect-build/rules_aws/issues/83
