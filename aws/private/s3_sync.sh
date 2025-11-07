@@ -74,6 +74,8 @@ Options:
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
+  --[no]skip_existing     Skip uploading files that already exist in S3.
+                          Default: false
   --output_json <file>    Collect SHA256 sums/S3 destination for every file and write as JSON to the specified file.
 
 Arguments:
@@ -85,20 +87,33 @@ EOF
 s3_cp() {
     local src="${1}"
     local dst="${2}"
+    local skipped=false
 
-    if [[ "${dry_run}" == "false" ]]; then
-        warn "Copying ${src} to ${dst}"
-        "$aws" s3 cp "${s3_args[@]}" "${src}" "${dst}"
-    else
-        warn "[DRY RUN] Would copy ${src} to ${dst}"
-        if [[ "${#s3_args[@]}" -gt 0 ]]; then
-            warn "[DRY RUN] with args: ${s3_args[*]}"
+    if [[ "${skip_existing}" == "true" && "${dry_run}" == "false" ]]; then
+        if "$aws" s3 ls "${dst}" >/dev/null 2>&1; then
+            warn "Skipping copying ${src} to ${dst} (already exists)"
+            skipped=true
+        fi
+    fi
+
+    if [[ "${skipped}" == "false" ]]; then
+        if [[ "${dry_run}" == "false" ]]; then
+            warn "Copying ${src} to ${dst}"
+            "$aws" s3 cp "${s3_args[@]}" "${src}" "${dst}"
+        else
+            [[ "${skip_existing}" == "true" ]] && warn "[DRY RUN] Would check if ${dst} exists in S3"
+            warn "[DRY RUN] Would copy ${src} to ${dst}"
+            [[ "${#s3_args[@]}" -gt 0 ]] && warn "[DRY RUN] with args: ${s3_args[*]}"
         fi
     fi
 
     if [[ -n "${output_json_file}" ]]; then
         local sha256_sum=$("$coreutils" sha256sum "${src}" | cut -d' ' -f1)
-        sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'"}')
+        if [[ "${skip_existing}" == "true" ]]; then
+            sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'","skipped":'"${skipped}"'}')
+        else
+            sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'"}')
+        fi
     fi
 }
 
@@ -125,6 +140,7 @@ output_json_results() {
 # Collect Args
 
 dry_run=false
+skip_existing=false
 output_json_file=""
 artifacts=()
 s3_args=()
@@ -153,6 +169,14 @@ while (("$#")); do
         ;;
     "--nodry_run")
         dry_run="false"
+        shift 1
+        ;;
+    "--skip_existing")
+        skip_existing="true"
+        shift 1
+        ;;
+    "--noskip_existing")
+        skip_existing="false"
         shift 1
         ;;
     "--output_json")
