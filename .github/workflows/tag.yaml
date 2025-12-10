@@ -24,7 +24,7 @@ jobs:
       new-tag: ${{ steps.ccv.outputs.new-tag }}
       new-tag-version: ${{steps.ccv.outputs.new-tag-version}}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           # Need enough history to find the prior release tag
           fetch-depth: 0
@@ -33,13 +33,12 @@ jobs:
         uses: smlx/ccv@7318e2f25a52dcd550e75384b84983973251a1f8 # v0.10.0
   release:
     needs: tag
-    if: needs.tag.outputs.new-tag == 'true' && needs.tag.outputs.new-tag-version-type != 'major'
     uses: ./.github/workflows/release.yaml
     with:
       tag_name: ${{ needs.tag.outputs.new-tag-version }}
-    secrets:
-      BCR_PUBLISH_TOKEN: ${{ secrets.BCR_PUBLISH_TOKEN }}
+    if: needs.tag.outputs.new-tag == 'true' && needs.tag.outputs.new-tag-version-type != 'major'
+    secrets: inherit
     permissions:
-      attestations: write
       contents: write
+      attestations: write
       id-token: write
