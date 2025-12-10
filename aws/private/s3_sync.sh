@@ -150,12 +150,14 @@ output_json_results() {
 transform_tag_json() {
     aws_tags="$("$jq" '{TagSet: (to_entries | map({Key: .key, Value: .value}))}' "${tag_json}")"
 
-    tags=$(cat "${tag_json}")
+    local tags=$(cat "${tag_json}")
 
     if [[ "${dry_run}" == "true" ]]; then
         warn "DRY RUN: Would transform tag_json ${tags} to:"
         warn "${aws_tags}"
     fi
+
+    echo "${tags}"
 }
 
 # Collect Args
@@ -272,7 +274,9 @@ fi
 # Copy artifacts
 
 if [[ -n "${tag_json:-}" ]]; then
-    transform_tag_json "${tag_json}"
+    tags=$(transform_tag_json "${tag_json}")
+else
+    tags=\"\"
 fi
 
 if [[ ! -z "${destination_uri_file:-}" ]]; then
