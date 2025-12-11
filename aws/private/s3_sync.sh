@@ -74,6 +74,8 @@ Options:
   --bucket_file <file>    The path to a file that contains the name of the S3 bucket.
   --[no]dry_run           Toggles whether the utility will run in dry-run mode.
                           Default: false
+  --[no]skip_existing     Skip uploading files that already exist in S3.
+                          Default: false
   --output_json <file>    Collect SHA256 sums/S3 destination for every file and write as JSON to the specified file.
 
 Arguments:
@@ -85,17 +87,43 @@ EOF
 s3_cp() {
     local src="${1}"
     local dst="${2}"
+    local skipped=false
 
-    if [[ "${dry_run}" == "false" ]]; then
-        warn "Copying ${src} to ${dst}"
-        "$aws" s3 cp "${src}" "${dst}"
-    else
-        warn "[DRY RUN] Would copy ${src} to ${dst}"
+    if [[ "${skip_existing}" == "true" ]]; then
+        if [[ "${dry_run}" == "false" ]]; then
+            if "$aws" s3 ls "${dst}" >/dev/null 2>&1; then
+                warn "Skipping copying ${src} to ${dst} (already exists)"
+                skipped=true
+            fi
+        else
+            warn "[DRY RUN] Would check if ${dst} exists in S3"
+        fi
+    fi
+
+    if [[ "${skipped}" == "false" ]]; then
+        if [[ "${dry_run}" == "false" ]]; then
+            warn "Copying ${src} to ${dst}"
+            "$aws" s3 cp "${s3_args[@]}" "${src}" "${dst}"
+        else
+            warn "[DRY RUN] Would copy ${src} to ${dst}"
+            [[ "${#s3_args[@]}" -gt 0 ]] && warn "[DRY RUN] with args: ${s3_args[*]}"
+        fi
+    fi
+
+    if [[ -n "${aws_tags:-}" ]]; then
+        api_bucket=$(echo "${dst}" | cut -d'/' -f3)
+        api_key=$(echo "${dst}" | cut -d'/' -f4-)
+        if [[ "${dry_run}" == "false" ]]; then
+            "$aws" s3api put-object-tagging --bucket "${api_bucket}" --key "${api_key}" --tagging "${aws_tags}"
+        else
+            warn "[DRY RUN] Would apply tags to ${dst}"
+            warn "[DRY RUN] Command: $aws s3api put-object-tagging --bucket ${api_bucket} --key ${api_key} --tagging ${aws_tags}"
+        fi
     fi
 
     if [[ -n "${output_json_file}" ]]; then
         local sha256_sum=$("$coreutils" sha256sum "${src}" | cut -d' ' -f1)
-        sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'"}')
+        sha256_results+=('{"file":"'"${src}"'","sha256":"'"${sha256_sum}"'","s3_path":"'"${dst}"'","skipped":'"${skipped}"',"tags":'"${tags}"'}')
     fi
 }
 
@@ -119,11 +147,26 @@ output_json_results() {
     msg "JSON output written to ${output_file}"
 }
 
+transform_tag_json() {
+    aws_tags="$("$jq" '{TagSet: (to_entries | map({Key: .key, Value: .value}))}' "${tag_json}")"
+
+    local tags=$(cat "${tag_json}")
+
+    if [[ "${dry_run}" == "true" ]]; then
+        warn "DRY RUN: Would transform tag_json ${tags} to:"
+        warn "${aws_tags}"
+    fi
+
+    echo "${tags}"
+}
+
 # Collect Args
 
 dry_run=false
+skip_existing=false
 output_json_file=""
 artifacts=()
+s3_args=()
 sha256_results=()
 
 while (("$#")); do
@@ -149,6 +192,14 @@ while (("$#")); do
         ;;
     "--nodry_run")
         dry_run="false"
+        shift 1
+        ;;
+    "--skip_existing")
+        skip_existing="true"
+        shift 1
+        ;;
+    "--noskip_existing")
+        skip_existing="false"
         shift 1
         ;;
     "--output_json")
@@ -221,6 +272,12 @@ if [[ ! -z "${role:-}" && "${dry_run}" == "false" ]]; then
 fi
 
 # Copy artifacts
+
+if [[ -n "${tag_json:-}" ]]; then
+    tags=$(transform_tag_json "${tag_json}")
+else
+    tags=\"\"
+fi
 
 if [[ ! -z "${destination_uri_file:-}" ]]; then
     s3_cp "${artifacts[0]}" "$(<"${destination_uri_file}")"

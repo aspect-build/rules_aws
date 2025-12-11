@@ -19,6 +19,10 @@ _ATTRS = {
         doc = "file containing a single line: the S3 path to copy to. Useful because the file content may be stamped.",
         allow_single_file = True,
     ),
+    "tag_json": attr.label(
+        doc = 'file containing a json object that contains tags to be applied to the files in the format of {"key1": "value1", "key2": "value2", ...}',
+        allow_single_file = True,
+    ),
     "destination_uri_file": attr.label(
         doc = """Only permitted when copying a single src file. A file containing a single line:
             the full [S3Uri](https://docs.aws.amazon.com/cli/latest/reference/s3/#path-argument-type) to copy the file to.""",
@@ -26,6 +30,10 @@ _ATTRS = {
     ),
     "role": attr.string(
         doc = "Assume this role before copying files, using `aws sts assume-role`",
+    ),
+    "s3_args": attr.string_list(
+        doc = "Additional arguments to pass to the aws s3 cp command",
+        default = [],
     ),
     "aws": attr.label(
         doc = "AWS CLI",
@@ -53,6 +61,9 @@ def _s3_sync_impl(ctx):
     vars = []
     if int(bool(ctx.attr.bucket)) + int(bool(ctx.attr.bucket_file)) + int(bool(ctx.attr.destination_uri_file)) != 1:
         fail("Exactly one of 'bucket', 'bucket_file', or 'destination_uri_file' must be set")
+    if ctx.attr.tag_json:
+        vars.append("tag_json=\"{}\"".format(ctx.file.tag_json.short_path))
+        runfiles.append(ctx.file.tag_json)
     if ctx.attr.bucket_file:
         vars.append("bucket_file=\"{}\"".format(ctx.file.bucket_file.short_path))
         runfiles.append(ctx.file.bucket_file)
@@ -74,6 +85,7 @@ def _s3_sync_impl(ctx):
             "$coreutils": coreutils.coreutils_info.bin.short_path,
             "$jq": jq.jqinfo.bin.short_path,
             "artifacts=()": "artifacts=({})".format(" ".join([s.short_path for s in ctx.files.srcs])),
+            "s3_args=()": "s3_args=({})".format(" ".join(ctx.attr.s3_args)),
             "# Collect Args": "\n".join(vars),
         },
     )

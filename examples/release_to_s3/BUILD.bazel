@@ -13,6 +13,14 @@ expand_template(
     template = ["myorg-dev-bucket/nested/path"],
 )
 
+# Tags to be applied to the files
+expand_template(
+    name = "tags",
+    out = "tags.json",
+    stamp_substitutions = {"dev": "{{BUILD_EMBED_LABEL}}"},
+    template = ['{"environment": "dev", "foo": "bar"}'],
+)
+
 # Example usages:
 # Dry run: show what files would be copied
 #  bazel run //examples/release_to_s3 -- --dry_run
@@ -25,12 +33,21 @@ s3_sync(
     srcs = ["my_file.txt"],
     bucket_file = ":release_destination",
     role = "arn:aws:iam::250292866473:role/AspectEngineering",
+    tag_json = ":tags",
 )
 
 s3_sync(
     name = "release_to_fixed_path",
     srcs = ["my_file.txt"],
     bucket = "my-bucket-name/sub-folder",
+)
+
+# s3_args can be used to pass options to aws s3 cp
+s3_sync(
+    name = "release_with_args",
+    srcs = ["my_file.txt"],
+    bucket = "my-bucket-name/sub-folder",
+    s3_args = ["--sse"],
 )
 
 ##############
