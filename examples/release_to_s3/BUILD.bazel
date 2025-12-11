@@ -1,4 +1,4 @@
-load("@aspect_bazel_lib//lib:expand_template.bzl", "expand_template")
+load("@bazel_lib//lib:expand_template.bzl", "expand_template")
 load("@aspect_rules_aws//aws:defs.bzl", "s3_sync")
 
 # Allow the destination bucket to vary depending on the stamp information
