@@ -7,25 +7,24 @@ module(
 
 # Lower-bound dependency versions.
 # Do not change unless the rules no longer work with the current version.
-# Needed for #804 Use statically-linked bsdtar on all platforms
-bazel_dep(name = "aspect_bazel_lib", version = "2.6.1")
+bazel_dep(name = "bazel_lib", version = "3.0.0")
 bazel_dep(name = "bazel_skylib", version = "1.5.0")
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_oci", version = "1.7.4")
 bazel_dep(name = "rules_python", version = "0.29.0")
+bazel_dep(name = "jq.bzl", version = "0.4.0")
+bazel_dep(name = "tar.bzl", version = "0.7.0")
 
 # Development dependencies which are not exposed to users
 bazel_dep(name = "aspect_rules_py", version = "1.6.6", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.1", dev_dependency = True)
 bazel_dep(name = "container_structure_test", version = "1.16.0", dev_dependency = True)
 
-bazel_lib_toolchains = use_extension("@aspect_bazel_lib//lib:extensions.bzl", "toolchains")
-bazel_lib_toolchains.jq()
+bazel_lib_toolchains = use_extension("@bazel_lib//lib:extensions.bzl", "toolchains")
 bazel_lib_toolchains.coreutils()
-use_repo(bazel_lib_toolchains, "coreutils_toolchains", "jq_toolchains")
+use_repo(bazel_lib_toolchains, "coreutils_toolchains")
 
 register_toolchains(
-    "@jq_toolchains//:all",
     "@coreutils_toolchains//:all",
 )
 
