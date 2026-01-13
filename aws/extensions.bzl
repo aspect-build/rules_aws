@@ -10,6 +10,7 @@ names (the latest version will be picked for each name) and can register them as
 effectively overriding the default named toolchain due to toolchain resolution precedence.
 """
 
+load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: disable=load
 load("@bazel_skylib//lib:new_sets.bzl", "sets")
 load(":repositories.bzl", "aws_register_toolchains")
 
