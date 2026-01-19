@@ -44,7 +44,7 @@ oci = use_extension(
 )
 oci.pull(
     name = "ubuntu",
-    digest = "sha256:0bced47fffa3361afa981854fcabcd4577cd43cebbb808cea2b1f33a3dd7f508",  # tag = "latest" on 13 July 2023
+    digest = "sha256:cd1dba651b3080c3686ecf4e3c4220f026b521fb76978881737d24f200828b2b",  # tag = "latest" on 13 July 2023
     image = "ubuntu",
     platforms = [
         "linux/amd64",
