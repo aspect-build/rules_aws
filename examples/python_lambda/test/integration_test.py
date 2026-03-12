@@ -1,7 +1,3 @@
-# add this temporarily to the top of integration_test.py
-import py
-print(py.__file__)
-print(dir(py))
 import json
 
 import docker
