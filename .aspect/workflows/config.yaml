@@ -17,6 +17,9 @@ tasks:
       id: bazel-7
       env:
         USE_BAZEL_VERSION: 7.x
+      bazel:
+        flags:
+          - --test_tag_filters=-requires-docker
   - test:
       name: "Test (Bazel 8.x)"
       id: bazel-8

@@ -19,8 +19,9 @@ jobs:
   test:
     strategy:
       matrix:
-        # Note: linux is tested on Buildkite via Aspect Workflows
+        # Note: linux is also tested on Buildkite via Aspect Workflows
         os:
+          - ubuntu-latest
           - macos-latest
           # TODO(alex): https://github.com/aspect-build/rules_aws/issues/14
           # - windows-latest
