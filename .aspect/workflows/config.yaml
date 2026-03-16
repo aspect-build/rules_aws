@@ -6,6 +6,9 @@ workspaces:
           without: true
   e2e/smoke:
     icon: aws
+bazel:
+  flags:
+    - --config=ci
 tasks:
   - test:
       name: Test (Bazel 6.x)
