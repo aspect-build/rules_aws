@@ -1,4 +1,4 @@
-load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@aspect_bazel_lib//:bzl_library.bzl", "bzl_library")
 load("//aws/private:resolved_toolchain.bzl", "resolved_toolchain")
 
 # This is the target rule authors should put in their "toolchains"
@@ -18,25 +18,6 @@ resolved_toolchain(
 )
 
 bzl_library(
-    name = "repositories",
-    srcs = ["repositories.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//aws/private:toolchains_repo",
-        "//aws/private:versions",
-        "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "@bazel_tools//tools/build_defs/repo:utils.bzl",
-    ],
-)
-
-bzl_library(
-    name = "extensions",
-    srcs = ["extensions.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [":repositories"],
-)
-
-bzl_library(
     name = "defs",
     srcs = ["defs.bzl"],
     visibility = ["//visibility:public"],
@@ -45,6 +26,7 @@ bzl_library(
         "//aws/private:s3_sync",
         "@rules_oci//oci:defs",
         "@rules_python//python:defs_bzl",
+        "@tar.bzl//:tar",
     ],
 )
 
