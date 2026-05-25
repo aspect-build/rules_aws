@@ -1,6 +1,6 @@
 load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 # Demonstrates that you can use the CLI in a genrule.
 # The toolchain provides a "Make variable" named AWS_CLI_BIN that you can expand.
@@ -52,10 +52,10 @@ platform_transition_filegroup(
 )
 
 # Manually try this out:
-# $ bazel run //examples/cli:tarball
+# $ bazel run //examples/cli:oci_load
 # $ docker run --rm -it awscli:latest s3api list-buckets
-oci_tarball(
-    name = "tarball",
+oci_load(
+    name = "load",
     image = ":linux_image",
     repo_tags = ["awscli:latest"],
 )
