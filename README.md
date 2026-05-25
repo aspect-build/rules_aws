@@ -1,5 +1,9 @@
 # Bazel rules for Amazon Web Services (AWS)
 
+> [!NOTE]
+> This repository uses the [Aspect CLI](https://github.com/aspect-build/aspect-cli) for CI and local development.
+> See the [docs](https://docs.aspect.build/cli/overview) and [install instructions](https://docs.aspect.build/cli/install) to get started.
+
 Integrations for using AWS as a deployment target for Bazel-built artifacts.
 
 This repo is EXPERIMENTAL! We have not yet decided whether to take any long-term commitment to support or maintenance of code here. We may archive and abandon the repo at any time, and may make undocumented breaking changes between releases.
