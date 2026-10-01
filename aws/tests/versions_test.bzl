@@ -7,7 +7,12 @@ load("//aws/private:versions.bzl", "TOOL_VERSIONS")
 
 def _smoke_test_impl(ctx):
     env = unittest.begin(ctx)
-    asserts.equals(env, "2.13.0", TOOL_VERSIONS.keys()[0])
+    asserts.true(env, "2.13.0" in TOOL_VERSIONS)
+    asserts.true(env, "2.36.19" in TOOL_VERSIONS)
+    for version, platforms in TOOL_VERSIONS.items():
+        for platform in ["linux-aarch64", "linux-x86_64", "darwin"]:
+            asserts.true(env, platform in platforms, "{} missing {}".format(version, platform))
+            asserts.true(env, platforms[platform][1].startswith("sha384-"))
     return unittest.end(env)
 
 # The unittest library requires that we export the test cases as named test rules,

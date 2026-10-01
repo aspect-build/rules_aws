@@ -10,6 +10,12 @@ TODO: generate this file from GitHub API"""
 # https://awscli.amazonaws.com/AWSCLIV2-2.0.30.pkg
 # https://awscli.amazonaws.com/AWSCLIV2-2.0.30.msi
 TOOL_VERSIONS = {
+    "2.36.19": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-HpDvQgHnzd4g67OG5Uyq/iu56Djp1O2hyU5cRebYPfqsXiPqZgF7kzgWn38xKN2j"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-Gc76QCiLi70AL9F0kmEpX1DwDd8XPv7FlBF0tcaAUwi5v7tYC6u8jlYz1o2NdRIx"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-YoX9jIsr1Ab8H0Ya4Q9iAwxBCSzQGbpEzInWpT4czamjc6pIsIaFhzMNmtrZ9Wt/"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-JO4yFGRE6INtwrLLz23wrpJgf5J0CCUCIGMJMwXnXPxmOq3O+4sSvDaW2u5Pq6A5"),
+    },
     "2.13.0": {
         "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-Nx0di+3PSU0NLp39pxNubnHkuRT9+B3ztGD6awyCKxLVwGaxT2v5osfaLLSj+9bW"),
         "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-qXEtDydyIB0C0sfMarp9EXoc5LpxLOMgMMx0LQMXhMJmBX3hq747KC63TcduHsoK"),
