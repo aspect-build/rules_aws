@@ -2,9 +2,9 @@
   "homepage": "https://github.com/aspect-build/rules_aws",
   "maintainers": [
     {
-      "email": "alex@aspect.build",
-      "github": "alexeagle",
-      "name": "Alex Eagle"
+      "email": "greg@aspect.build",
+      "github": "gregmagolan",
+      "name": "Greg Magolan"
     },
     {
       "github": "CaerusKaru"
