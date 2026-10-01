@@ -25,6 +25,20 @@ For example to use commit `abc123`:
    guarantee on the sha256 stability, see
    <https://github.blog/2023-02-21-update-on-the-future-stability-of-source-code-archives-and-hashes/>
 
+## Choosing an AWS CLI version
+
+Select the CLI version in `MODULE.bazel`:
+
+```starlark
+aws = use_extension("@aspect_rules_aws//aws:extensions.bzl", "aws")
+aws.toolchain(aws_cli_version = "2.36.19")
+```
+
+Versions mirrored in [versions.bzl](aws/private/versions.bzl) are verified automatically.
+Any other release AWS publishes can be used by also pinning its hashes with `integrity_hashes`
+(keyed by `darwin`, `linux-aarch64` and `linux-x86_64`). If they're omitted, Bazel prints the
+hashes to pin on first fetch.
+
 ## Roadmap
 
 Aspect plans to open-source our internal AWS support from our private monorepo.
