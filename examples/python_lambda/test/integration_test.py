@@ -5,7 +5,7 @@ import pytest
 import requests
 from testcontainers.core.container import DockerContainer
 
-TAR_PATH = "examples/python_lambda/tarball/tarball.tar"
+TAR_PATH = "examples/python_lambda/load/tarball.tar"
 IMAGE_NAME = "aws_lambda_hello_world:latest"
 
 
