@@ -1,0 +1,29 @@
+name: Mirror Releases
+on:
+  # Trigger manually in the UI
+  workflow_dispatch:
+  # Trigger weekly on Mondays at 06:45 UTC; AWS ships CLI releases most weekdays
+  schedule:
+    - cron: "45 6 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    if: github.repository == 'aspect-build/rules_aws'
+    steps:
+      - uses: actions/checkout@v6
+      - run: ./scripts/mirror_releases.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          commit-message: "chore: mirror external releases"
+          title: "chore: mirror AWS CLI releases"
+          branch: mirror-aws-cli-releases
+          author: "aspect-marvin <marvin@aspect.build>"
+          committer: "aspect-marvin <marvin@aspect.build>"

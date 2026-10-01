@@ -1,9 +1,6 @@
 """Mirror of release info
 
-TODO: generate this file from GitHub API"""
-
-# The integrity hashes can be computed with
-# shasum -b -a 384 [downloaded file] | awk '{ print $1 }' | xxd -r -p | base64
+Updated by scripts/mirror_releases.py, run weekly by .github/workflows/mirror.yaml."""
 
 # Amazon CDN serves at urls like
 # https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.0.30.zip
