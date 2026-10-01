@@ -1,6 +1,6 @@
 """Mirror of release info
 
-Updated by scripts/mirror_releases.py, run weekly by .github/workflows/mirror.yaml."""
+Updated by `aspect mirror-releases` (.aspect/mirror_releases.axl), run weekly by .github/workflows/mirror.yaml."""
 
 # Amazon CDN serves at urls like
 # https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.0.30.zip
