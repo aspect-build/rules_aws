@@ -41,21 +41,57 @@ def rules_aws_dependencies():
 ########
 _DOC = "Fetch external tools needed for aws toolchain"
 _ATTRS = {
-    "aws_cli_version": attr.string(mandatory = True, values = TOOL_VERSIONS.keys()),
+    "aws_cli_version": attr.string(mandatory = True),
     "download_host": attr.string(default = "https://awscli.amazonaws.com"),
+    "integrity_hashes": attr.string_dict(doc = "Mapping from platform to the SRI integrity hash of its AWS CLI download."),
     "platform": attr.string(mandatory = True, values = PLATFORMS.keys()),
 }
 _CLI_INSTALL_PATH = "installed"
 
+# Filenames AWS publishes each release under, used for versions not mirrored in TOOL_VERSIONS.
+_FILENAMES = {
+    "darwin": "AWSCLIV2-{}.pkg",
+    "linux-aarch64": "awscli-exe-linux-aarch64-{}.zip",
+    "linux-x86_64": "awscli-exe-linux-x86_64-{}.zip",
+}
+
 def _release_info(rctx):
-    release_info = TOOL_VERSIONS[rctx.attr.aws_cli_version][rctx.attr.platform]
+    """Resolves the download url and integrity for the requested version and platform.
+
+    The user-supplied integrity_hashes take precedence over the mirrored TOOL_VERSIONS.
+    An empty integrity means the version isn't known; it's downloaded unverified and
+    _warn_unpinned reports the hash to pin.
+    """
+    version = rctx.attr.aws_cli_version
+    platform = rctx.attr.platform
+    filename, integrity = TOOL_VERSIONS.get(version, {}).get(platform, (_FILENAMES[platform], ""))
+    integrity = rctx.attr.integrity_hashes.get(platform, integrity)
     return {
-        "url": "/".join([
-            rctx.attr.download_host,
-            release_info[0].format(rctx.attr.aws_cli_version),
-        ]),
-        "integrity": release_info[1],
+        "url": "/".join([rctx.attr.download_host, filename.format(version)]),
+        "integrity": integrity,
     }
+
+def _warn_unpinned(rctx, release_info, result):
+    if release_info["integrity"]:
+        return
+
+    # buildifier: disable=print
+    print("""\
+WARNING: aws CLI {version} is not mirrored in rules_aws, so {url} was downloaded without an integrity check.
+To make this reproducible, pin it in the toolchain tag:
+    aws.toolchain(
+        aws_cli_version = "{version}",
+        integrity_hashes = {{
+            "{platform}": "{integrity}",
+            ...
+        }},
+    )
+""".format(
+        version = rctx.attr.aws_cli_version,
+        url = release_info["url"],
+        platform = rctx.attr.platform,
+        integrity = result.integrity,
+    ))
 
 def _cli_install_error(result):
     fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
@@ -65,11 +101,12 @@ def _is_darwin(rctx):
     return rctx.os.name.lower().startswith("mac os")
 
 def _install_linux(rctx, release_info):
-    rctx.download_and_extract(
+    result = rctx.download_and_extract(
         url = release_info["url"],
         integrity = release_info["integrity"],
         stripPrefix = "aws",
     )
+    _warn_unpinned(rctx, release_info, result)
     result = rctx.execute(["./install", "--install-dir", _CLI_INSTALL_PATH, "--bin-dir", "/dev/null"])
     if result.return_code:
         _cli_install_error(result)
@@ -86,7 +123,8 @@ def _install_linux(rctx, release_info):
     return (dist_dir, rctx.path("installed/{}/aws".format(dist_dir)))
 
 def _install_darwin(rctx, release_info):
-    rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.pkg")
+    result = rctx.download(url = release_info["url"], integrity = release_info["integrity"], output = "AWSCLI.pkg")
+    _warn_unpinned(rctx, release_info, result)
 
     # NB: don't expect pkgutil on the PATH, users may run with --repo_env and /usr/sbin no longer appears
     result = rctx.execute(["/usr/sbin/pkgutil", "--expand-full", "AWSCLI.pkg", "installed"])
@@ -193,7 +231,7 @@ def aws_register_toolchains(name, register = True, **kwargs):
     """Convenience macro for users which does typical setup.
 
     - create a repository for each built-in platform like "aws_linux_amd64" -
-      this repository is lazily fetched when node is needed for that platform.
+      this repository is lazily fetched when aws is needed for that platform.
     - TODO: create a convenience repository for the host platform like "aws_host"
     - create a repository exposing toolchains for each platform like "aws_platforms"
     - register a toolchain pointing at each platform
@@ -202,7 +240,7 @@ def aws_register_toolchains(name, register = True, **kwargs):
         name: base name for all created repos, like "aws1_14"
         register: whether to call through to native.register_toolchains.
             Should be True for WORKSPACE users, but false when used under bzlmod extension
-        **kwargs: passed to each node_repositories call
+        **kwargs: passed to each aws_repositories call, e.g. aws_cli_version and integrity_hashes
     """
     aws_alias(name = name)
     for platform in PLATFORMS.keys():
