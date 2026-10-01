@@ -1,0 +1,129 @@
+"""`aspect mirror-releases` — mirror AWS CLI releases into aws/private/versions.bzl.
+
+AWS doesn't publish checksums for the CLI installers, so this downloads each
+platform's installer from awscli.amazonaws.com and computes its sha384 SRI hash.
+New entries are inserted into TOOL_VERSIONS in descending version order; existing
+ones are left alone. The file is rewritten after each version, so an interrupted
+run can simply be restarted.
+
+Usage:
+    aspect mirror-releases                  # mirror the latest 2.x release from aws/aws-cli tags
+    aspect mirror-releases --all            # mirror every 2.x release newer than the oldest mirrored one
+    aspect mirror-releases 2.37.7 2.37.6    # mirror specific versions
+
+Set GITHUB_TOKEN to avoid GitHub API rate limits.
+"""
+
+load("@std//base64.axl", "base64")
+load("@std//hash.axl", "sha384")
+
+_VERSIONS_BZL = "aws/private/versions.bzl"
+_DOWNLOAD_HOST = "https://awscli.amazonaws.com"
+_FILENAMES = {
+    "linux-aarch64": "awscli-exe-linux-aarch64-{}.zip",
+    "linux-x86_64": "awscli-exe-linux-x86_64-{}.zip",
+    "darwin": "AWSCLIV2-{}.pkg",
+    "win32": "AWSCLIV2-{}.msi",
+}
+_END = "\n}\n"
+
+def _parse_v2(version):
+    """Returns the version as an int tuple if it's a 2.x.y release, else None."""
+    parts = version.split(".")
+    if len(parts) != 3 or parts[0] != "2" or not all([p.isdigit() for p in parts]):
+        return None
+    return tuple([int(p) for p in parts])
+
+def _header(version):
+    return '    "{}": {{'.format(version)
+
+def _releases(ctx):
+    """Returns every 2.x tag on aws/aws-cli."""
+    headers = {"Accept": "application/vnd.github+json"}
+    token = ctx.std.env.var("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    tags = []
+
+    # Starlark has no while loop; aws/aws-cli has ~2000 tags, well under this bound.
+    for page in range(1, 100):
+        url = "https://api.github.com/repos/aws/aws-cli/tags?per_page=100&page={}".format(page)
+        resp = ctx.http().get(url = url, headers = headers).block()
+        if resp.status != 200:
+            fail("Failed to list aws/aws-cli tags: HTTP {}".format(resp.status))
+        batch = json.decode(resp.body)
+        if not batch:
+            break
+        tags.extend([t["name"] for t in batch if _parse_v2(t["name"])])
+    if not tags:
+        fail("No 2.x tags found on aws/aws-cli")
+    return tags
+
+def _integrity(ctx, url, tmp):
+    ctx.http().download(url = url, output = tmp, mode = 0o644).block()
+    h = sha384()
+    for chunk in ctx.std.fs.open(tmp):
+        h.update(chunk)
+    ctx.std.fs.remove_file(tmp)
+    return "sha384-" + base64.encode(h.digest())
+
+def _entry(ctx, version, tmp):
+    lines = [_header(version)]
+    for platform, filename in _FILENAMES.items():
+        url = "/".join([_DOWNLOAD_HOST, filename.format(version)])
+        print("Hashing " + url)
+        lines.append('        "{}": ("{}", "{}"),'.format(platform, filename, _integrity(ctx, url, tmp)))
+    lines.append("    },")
+    return "\n".join(lines) + "\n"
+
+def _insert(content, known, version, entry):
+    """Inserts entry before the first mirrored version older than it, keeping descending order."""
+    older = [k for k in known if _parse_v2(k) < _parse_v2(version)]
+    if older:
+        anchor = _header(sorted(older, key = _parse_v2)[-1])
+        return content.replace(anchor, entry + anchor, 1)
+    i = content.rindex(_END)
+    return content[:i + 1] + entry + content[i + 1:]
+
+def _impl(ctx: TaskContext) -> int:
+    path = ctx.std.env.git_root_dir() + "/" + _VERSIONS_BZL
+    content = ctx.std.fs.read_to_string(path)
+    known = [
+        line.strip().split('"')[1]
+        for line in content.splitlines()
+        if line.startswith('    "') and line.endswith('": {')
+    ]
+
+    if ctx.args.versions:
+        requested = ctx.args.versions
+        for v in requested:
+            if not _parse_v2(v):
+                fail("Not an AWS CLI 2.x version: " + v)
+    elif ctx.args.all:
+        oldest = sorted([_parse_v2(k) for k in known])[0]
+        requested = [v for v in _releases(ctx) if _parse_v2(v) > oldest]
+    else:
+        requested = [sorted(_releases(ctx), key = _parse_v2)[-1]]
+
+    new = sorted([v for v in requested if v not in known], key = _parse_v2, reverse = True)
+    if not new:
+        print("Nothing to mirror")
+        return 0
+
+    tmp = ctx.std.fs.mkdtemp() + "/installer"
+    for i, v in enumerate(new):
+        print("[{}/{}] {}".format(i + 1, len(new), v))
+        content = _insert(content, known, v, _entry(ctx, v, tmp))
+        known.append(v)
+        ctx.std.fs.write(path, content)
+    print("Mirrored " + ", ".join(new))
+    return 0
+
+mirror_releases = task(
+    summary = "Mirror AWS CLI releases into aws/private/versions.bzl.",
+    implementation = _impl,
+    args = {
+        "all": args.boolean(default = False, description = "Mirror every 2.x release newer than the oldest mirrored version"),
+        "versions": args.positional(maximum = 1000, description = "AWS CLI versions to mirror; defaults to the latest 2.x release"),
+    },
+)
