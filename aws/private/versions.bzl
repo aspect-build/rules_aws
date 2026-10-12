@@ -7,6 +7,36 @@ Updated by `aspect mirror-releases` (.aspect/mirror_releases.axl), run weekly by
 # https://awscli.amazonaws.com/AWSCLIV2-2.0.30.pkg
 # https://awscli.amazonaws.com/AWSCLIV2-2.0.30.msi
 TOOL_VERSIONS = {
+    "2.37.12": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-KtoddFvmOugQSgirr62Op2CIKhoIfGoolZ7VhDsDV8X/iFVBt6DpdP7aLazxuett"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-hBQakNklt1JCBRV/vBT/gx0upuOBIAf7/9bYoChjIYzCX+WFjSRZDZ9dGKQkLsI8"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-0mxz9tyEIsH39nJsojxHeDgrENK1RH19C0E85GB8EBTFcGxXlJ8cwu1QeRUPyZ5b"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-+CP9yqTid4G7GWc3wKhcID0PK90M9MA3uoZP94aUd5DnL5yHknz6uNslZ1wVXB+C"),
+    },
+    "2.37.11": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-zfBfkiOg8Y4QuO5/OkhG+5CZRy5kHlpsNy7gcYPx8a3v217ilNLZZ/dB7Ba+1MXf"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-HN7wIN5H8oz//mv7C6pyUyZH6WNBHW7g7kh2JPOScUXIDqMoWk1z2mxKaMIP0Xv0"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-nMUWo8KUQfTIj6St7e2JJ+X3bK9t3BKbcGDuJQ5ojtpVaAg/2AU4CVnfGo1IzxlS"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-32xACwtKbrPhw85sZQsHm/AU/c+6pdR2bMDbBlkHydWF7E5mTfyc/a4p6QetDMm8"),
+    },
+    "2.37.10": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-+lIr5WjfS1hti2cG3SFCpK2pRB680AOuJjNvCzfLD2wNqH1l2IHW+dv5Fpwffnho"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-66+OBIOMUudoqpaw3BhhAyCztyRNW68pm6yXD3l1qKCFTyfRws2ZnCg7qxLmezB8"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-4gkiV6TbRX/U6OLuW3eWaOoShE3rSv5VPiHHdZ1Sl6XqszPEIKDKisk0KFXKvkq/"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-vY0Z1caMaiD4SFboA68V0Q/G1YxDFDPOmSvzKTq5JTI4BZNHEcGKpXEOx5lWIkRI"),
+    },
+    "2.37.9": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-n0RFSzU3Ydttjid+6oF0M0YFSwvQwEIhA4r6RaKeK16vH0oLFAgI0lJk7L2UPA4P"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-ptSR6ZjnzRyyjyE1KwUeuXv9q1TeMlobMw34EEbNWKRHTEXY2+xK3CFo79rd7Hbt"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-nY1GEEF02lq68JHAZFDZeyR6aKNfwD198qLUKuHLs5+QROUQYiX4nq6Wk3mhid/d"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-H33bLcmbb4VmVEXnWUmmwYsElhfvlQUXpzQWXt2U3LO5B5F3kjiGXd6VMmVkbxNU"),
+    },
+    "2.37.8": {
+        "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-PahUsvyx5WnXbf7RTaaVk0R4K92cLVb42m8+HUqtkhHMTxe+/6VH86hEa52KM05D"),
+        "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-LiQVUpVA5s8NbHYTUiBiDef0UMlbnvCRF9ZTH9InKzYQq+S+vHklq0XA7HOufC41"),
+        "darwin": ("AWSCLIV2-{}.pkg", "sha384-fZ2fWVlWLMiSkxRrFFtZUvk8ljItOWhBSUz7hH3kRH9liwfTueXXfrrNzG/0hDF5"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-BIIVBVuANSGkpiraDRLKSM60Uf5JR1Ug18XzesFbmLndZBpj318Jy6yDcYI/4LnS"),
+    },
     "2.37.7": {
         "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-0obpxKsb9UrQ4q+q5FfSJMjiekKAiVGG2biVtqxkPaa6UAhk8L0hZH4EFqQt8ILP"),
         "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-LjSfD76pokPfTuyoYGR+9w0N85jt8iuNQWfkE1aMOsXghAMTCYy8RP6ztBtUeKd0"),
