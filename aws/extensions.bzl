@@ -26,7 +26,6 @@ aws.toolchain(
 Without them the CLI is downloaded unverified and a warning prints the hashes to pin.
 """
 
-load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: disable=load
 load("@bazel_skylib//lib:versions.bzl", "versions")
 load(":repositories.bzl", "aws_register_toolchains")
 
