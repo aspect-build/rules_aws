@@ -1,5 +1,8 @@
 # Bazel rules for Amazon Web Services (AWS)
 
+> [!IMPORTANT]
+> This module was previously published as `aspect_rules_aws`. To upgrade, replace `aspect_rules_aws` with `rules_aws` in your `bazel_dep`, `load()` statements and flags.
+
 > [!NOTE]
 > This repository uses the [Aspect CLI](https://github.com/aspect-build/aspect-cli) for CI and local development.
 > See the [docs](https://docs.aspect.build/cli/overview) and [install instructions](https://docs.aspect.build/cli/install) to get started.
@@ -30,7 +33,7 @@ For example to use commit `abc123`:
 Select the CLI version in `MODULE.bazel`:
 
 ```starlark
-aws = use_extension("@aspect_rules_aws//aws:extensions.bzl", "aws")
+aws = use_extension("@rules_aws//aws:extensions.bzl", "aws")
 aws.toolchain(aws_cli_version = "2.36.19")
 ```
 

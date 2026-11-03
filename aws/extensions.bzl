@@ -12,7 +12,7 @@ effectively overriding the default named toolchain due to toolchain resolution p
 Versions not mirrored in rules_aws can be used by also supplying `integrity_hashes`:
 
 ```starlark
-aws = use_extension("@aspect_rules_aws//aws:extensions.bzl", "aws")
+aws = use_extension("@rules_aws//aws:extensions.bzl", "aws")
 aws.toolchain(
     aws_cli_version = "2.40.0",
     integrity_hashes = {

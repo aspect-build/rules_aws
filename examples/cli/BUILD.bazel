@@ -9,7 +9,7 @@ genrule(
     srcs = [],
     outs = ["help.txt"],
     cmd = "$(AWS_CLI_BIN) help > $@",
-    toolchains = ["@aspect_rules_aws//aws:resolved_toolchain"],
+    toolchains = ["@rules_aws//aws:resolved_toolchain"],
 )
 
 assert_contains(
