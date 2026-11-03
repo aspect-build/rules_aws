@@ -88,7 +88,7 @@ toolchain(
     name = "{platform}_toolchain",
     exec_compatible_with = {compatible_with},
     toolchain = "@{user_repository_name}_{platform}//:aws_toolchain",
-    toolchain_type = "@aspect_rules_aws//aws:toolchain_type",
+    toolchain_type = "@rules_aws//aws:toolchain_type",
 )
 """.format(
             platform = platform,

@@ -1,6 +1,6 @@
 # Override http_archive for local testing
 local_repository(
-    name = "aspect_rules_aws",
+    name = "rules_aws",
     path = "../..",
 )
 
@@ -14,7 +14,7 @@ local_repository(
 # you should fetch it *before* calling this.
 # Alternatively, you can skip calling this function, so long as you've
 # already fetched all the dependencies.
-load("@aspect_rules_aws//aws:repositories.bzl", "aws_register_toolchains", "rules_aws_dependencies")
+load("@rules_aws//aws:repositories.bzl", "aws_register_toolchains", "rules_aws_dependencies")
 
 rules_aws_dependencies()
 

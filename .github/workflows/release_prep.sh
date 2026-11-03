@@ -17,7 +17,7 @@ cat << EOF
 Add to your \`MODULE.bazel\` file:
 
 \`\`\`starlark
-bazel_dep(name = "aspect_rules_aws", version = "${TAG:1}")
+bazel_dep(name = "rules_aws", version = "${TAG:1}")
 \`\`\`
 
 ## Using WORKSPACE
@@ -27,7 +27,7 @@ Paste this snippet into your `WORKSPACE.bazel` file:
 \`\`\`starlark
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
-    name = "aspect_rules_aws",
+    name = "rules_aws",
     sha256 = "${SHA}",
     strip_prefix = "${PREFIX}",
     url = "https://github.com/aspect-build/rules_aws/releases/download/${TAG}/${ARCHIVE}",

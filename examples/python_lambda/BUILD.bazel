@@ -1,6 +1,6 @@
 "Example Python AWS lambda using a container"
 
-load("@aspect_rules_aws//aws:defs.bzl", "aws_py_lambda")
+load("@rules_aws//aws:defs.bzl", "aws_py_lambda")
 load("@pip//:requirements.bzl", "requirement")
 load("@rules_oci//oci:defs.bzl", "oci_load")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")

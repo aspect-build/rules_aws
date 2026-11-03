@@ -1,7 +1,7 @@
 "Bazel dependencies"
 
 module(
-    name = "aspect_rules_aws",
+    name = "rules_aws",
     compatibility_level = 1,
 )
 
@@ -53,7 +53,7 @@ use_repo(oci, "ubuntu")
 register_toolchains("@aws_toolchains//:all")
 
 aws_py_lambda = use_extension(
-    "@aspect_rules_aws//aws:repositories.oci.bzl",
+    "@rules_aws//aws:repositories.oci.bzl",
     "aws_py_lambda",
     dev_dependency = True,
 )

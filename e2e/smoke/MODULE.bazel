@@ -1,10 +1,10 @@
-bazel_dep(name = "aspect_rules_aws", version = "0.0.0", dev_dependency = True)
+bazel_dep(name = "rules_aws", version = "0.0.0", dev_dependency = True)
 bazel_dep(name = "bazel_skylib", version = "1.6.1", dev_dependency = True)
 
 local_path_override(
-    module_name = "aspect_rules_aws",
+    module_name = "rules_aws",
     path = "../..",
 )
 
-aws = use_extension("@aspect_rules_aws//aws:extensions.bzl", "aws")
+aws = use_extension("@rules_aws//aws:extensions.bzl", "aws")
 use_repo(aws, "aws")
