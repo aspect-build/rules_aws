@@ -1,7 +1,7 @@
 """Declare runtime dependencies
 
 These are needed for local dev, and users must install them as well.
-See https://docs.bazel.build/versions/main/skylark/deploying.html#dependencies
+See https://bazel.build/rules/deploying#dependencies
 """
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", _http_archive = "http_archive")
@@ -192,9 +192,6 @@ aws_repositories = repository_rule(
     attrs = _ATTRS,
 )
 
-def _is_bazel_6_or_greater():
-    return "apple_binary" not in dir(native)
-
 def _aws_alias_impl(rctx):
     rctx.file("BUILD.bazel", """\
 load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
@@ -212,7 +209,7 @@ native_binary(
     out = "aws",
     visibility = ["//visibility:public"],
 )
-""".format(("@@" if _is_bazel_6_or_greater() else "@") + rctx.name))
+""".format("@@" + rctx.name))
 
 aws_alias = repository_rule(
     _aws_alias_impl,

@@ -20,5 +20,5 @@ rules_aws_dependencies()
 
 aws_register_toolchains(
     name = "aws",
-    aws_cli_version = "2.13.0",
+    aws_cli_version = "2.39.6",
 )

@@ -32,7 +32,7 @@ def _aws_toolchain_impl(ctx):
         target_tool_path = _to_manifest_path(ctx, tool_files[0])
 
     # Make the $(AWS_CLI_BIN) variable available in places like genrules.
-    # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
+    # See https://bazel.build/reference/be/make-variables#custom_variables
     template_variables = platform_common.TemplateVariableInfo({
         "AWS_CLI_BIN": target_tool_path,
     })
@@ -73,6 +73,6 @@ aws_toolchain = rule(
     },
     doc = """Defines a aws compiler/runtime toolchain.
 
-For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
+For usage see https://bazel.build/extending/toolchains#toolchain-definitions.
 """,
 )
