@@ -46,8 +46,8 @@ _ATTRS = {
 
 def _s3_sync_impl(ctx):
     aws_toolchain = ctx.toolchains["//aws:toolchain_type"]
-    coreutils = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
-    jq = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
+    coreutils = ctx.toolchains["@bazel_lib//lib:coreutils_toolchain_type"]
+    jq = ctx.toolchains["@jq.bzl//jq/toolchain:type"]
 
     if ctx.attr.aws:
         aws_tool_path = ctx.attr.aws[DefaultInfo].default_runfiles.files.to_list()[0].short_path
@@ -102,7 +102,7 @@ s3_sync = rule(
     doc = _DOC,
     toolchains = [
         "//aws:toolchain_type",
-        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
-        "@aspect_bazel_lib//lib:jq_toolchain_type",
+        "@bazel_lib//lib:coreutils_toolchain_type",
+        "@jq.bzl//jq/toolchain:type",
     ],
 )
