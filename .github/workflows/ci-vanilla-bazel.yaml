@@ -35,4 +35,6 @@ jobs:
         run: bazel run @aws help
       - name: run CLI with workspace
         working-directory: e2e/smoke
-        run: bazel run --enable_workspace @aws help
+        env:
+          USE_BAZEL_VERSION: 8.x
+        run: bazel run --noenable_bzlmod --enable_workspace @aws help

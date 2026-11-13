@@ -25,8 +25,8 @@ jobs:
                 - { path: ".", slug: "root" }
                 - { path: "e2e/smoke", slug: "e2e-smoke" }
                 bazel:
-                - { id: "bazel-7", version: "7.x", flags: "--bazel-flag=--test_tag_filters=-requires-docker" }
                 - { id: "bazel-8", version: "8.x", flags: "--bazel-flag=--test_tag_filters=-requires-docker" }
+                - { id: "bazel-9", version: "9.x", flags: "--bazel-flag=--test_tag_filters=-requires-docker" }
         env:
             USE_BAZEL_VERSION: ${{ matrix.bazel.version }}
         steps:
