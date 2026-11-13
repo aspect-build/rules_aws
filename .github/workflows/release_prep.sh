@@ -12,7 +12,7 @@ git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip > $ARCHIVE
 SHA=$(shasum -a 256 $ARCHIVE | awk '{print $1}')
 
 cat << EOF
-## Using Bzlmod with Bazel 7 or greater
+## Using Bzlmod with Bazel 8 or greater
 
 Add to your \`MODULE.bazel\` file:
 
@@ -20,7 +20,9 @@ Add to your \`MODULE.bazel\` file:
 bazel_dep(name = "rules_aws", version = "${TAG:1}")
 \`\`\`
 
-## Using WORKSPACE
+## Using WORKSPACE (Bazel 8 only)
+
+WORKSPACE support was removed in Bazel 9. On Bazel 8, it requires \`--enable_workspace\`.
 
 Paste this snippet into your \`WORKSPACE.bazel\` file:
 
