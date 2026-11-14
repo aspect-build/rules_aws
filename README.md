@@ -28,3 +28,9 @@ Versions mirrored in [versions.bzl](aws/private/versions.bzl) are verified autom
 Any other release AWS publishes can be used by also pinning its hashes with `integrity_hashes`
 (keyed by `darwin`, `linux-aarch64` and `linux-x86_64`). If they're omitted, Bazel prints the
 hashes to pin on first fetch.
+
+## Support
+
+This ruleset is community-supported with help from [Aspect](https://aspect.build).
+We review pull requests and fix critical issues when we can, but we cannot promise timelines.
+Contributions are welcome.
