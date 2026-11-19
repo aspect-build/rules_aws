@@ -4,7 +4,7 @@ bcr_test_module:
     bazel:
       - 8.x
       - 9.x
-    platform: ["debian10", "macos", "ubuntu2204", "windows"]
+    platform: ["debian13", "macos", "ubuntu2204", "windows"]
   tasks:
     run_tests:
       name: "Run test module"
