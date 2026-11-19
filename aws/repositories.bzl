@@ -90,30 +90,19 @@ To make this reproducible, pin it in the toolchain tag:
 def _cli_install_error(result):
     fail("aws CLI unpacking failed.\nSTDOUT: {}\nSTDERR: {}".format(result.stdout, result.stderr))
 
-def _is_darwin(rctx):
-    """Returns true if the host operating system is Darwin"""
-    return rctx.os.name.lower().startswith("mac os")
-
 def _install_linux(rctx, release_info):
+    dist_dir = "v2/{}/dist".format(rctx.attr.aws_cli_version)
+
+    # The installer runs dist/aws to detect the version, which fails when the
+    # downloaded CLI targets a different architecture from the repository host.
+    # The dist directory is self-contained; extract it directly into the layer.
     result = rctx.download_and_extract(
         url = release_info["url"],
         integrity = release_info["integrity"],
-        stripPrefix = "aws",
+        output = "{}/{}".format(_CLI_INSTALL_PATH, dist_dir),
+        stripPrefix = "aws/dist",
     )
     _warn_unpinned(rctx, release_info, result)
-    result = rctx.execute(["./install", "--install-dir", _CLI_INSTALL_PATH, "--bin-dir", "/dev/null"])
-    if result.return_code:
-        _cli_install_error(result)
-
-    # When we run the install program on Macos (for a Linux exec/target platform),
-    # it will fail to run the aws command to determine its own version, and lay out
-    # using a different path.
-
-    if _is_darwin(rctx):
-        dist_dir = "v2/dist"
-    else:
-        dist_dir = "v2/{}/dist".format(rctx.attr.aws_cli_version)
-
     return (dist_dir, rctx.path("installed/{}/aws".format(dist_dir)))
 
 def _install_darwin(rctx, release_info):

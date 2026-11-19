@@ -1,3 +1,14 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load(":versions_test.bzl", "versions_test_suite")
 
 versions_test_suite(name = "versions_test")
+
+# Building both layers on a single host must not execute the other CPU's CLI
+# binary while fetching its repository.
+build_test(
+    name = "linux_cli_layers",
+    targets = [
+        "@aws_linux-aarch64//layer:aws_cli_layer",
+        "@aws_linux-x86_64//layer:aws_cli_layer",
+    ],
+)
