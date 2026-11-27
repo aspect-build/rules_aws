@@ -38,7 +38,7 @@ Overriding the default is only permitted in the root module.
 """, default = _DEFAULT_NAME),
     "aws_cli_version": attr.string(doc = "Explicit version of the aws CLI.", mandatory = True),
     "integrity_hashes": attr.string_dict(doc = """\
-Mapping from platform (darwin, linux-aarch64, linux-x86_64) to the SRI integrity hash of
+Mapping from platform (darwin, linux-aarch64, linux-x86_64, windows) to the SRI integrity hash of
 the AWS CLI download. Overrides the hashes mirrored in rules_aws, and allows using versions
 that aren't mirrored.
 """),
