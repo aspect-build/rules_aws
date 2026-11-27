@@ -4199,6 +4199,6 @@ TOOL_VERSIONS = {
         "linux-aarch64": ("awscli-exe-linux-aarch64-{}.zip", "sha384-Nx0di+3PSU0NLp39pxNubnHkuRT9+B3ztGD6awyCKxLVwGaxT2v5osfaLLSj+9bW"),
         "linux-x86_64": ("awscli-exe-linux-x86_64-{}.zip", "sha384-qXEtDydyIB0C0sfMarp9EXoc5LpxLOMgMMx0LQMXhMJmBX3hq747KC63TcduHsoK"),
         "darwin": ("AWSCLIV2-{}.pkg", "sha384-l+L9FfR/H0lcjwnprTS/lC5xi04QeUOID2LgAZw1CocoPM3D1sEAXQwz5oBAzpyP"),
-        "win32": ("AWSCLIV2-{}.msi", "sha384-OVKtCKMkuYzMsALVQT/lf/YvWHUbBUVK/dGZemdIAZI30pM919untzJEyJ4EmJnT"),
+        "win32": ("AWSCLIV2-{}.msi", "sha384-SxpmqUhP2LnvfqdAlQbbsIGSIX3yYhJYrY4OwAJAflFcF4LzNvF1BkZz+MIUa+9S"),
     },
 }

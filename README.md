@@ -26,8 +26,16 @@ aws.toolchain(aws_cli_version = "2.39.6")
 
 Versions mirrored in [versions.bzl](aws/private/versions.bzl) are verified automatically.
 Any other release AWS publishes can be used by also pinning its hashes with `integrity_hashes`
-(keyed by `darwin`, `linux-aarch64` and `linux-x86_64`). If they're omitted, Bazel prints the
-hashes to pin on first fetch.
+(keyed by `darwin`, `linux-aarch64`, `linux-x86_64` and `windows`). If they're omitted, Bazel
+prints the hashes to pin on first fetch.
+
+## Windows
+
+The MSI installer is unpacked with an administrative install (`msiexec /a`), which needs no admin
+rights and installs nothing on the machine. `bazel run @aws` starts the CLI through a batch file, so
+`cmd.exe` interprets `&`, `|`, `<`, `>` and `^` in arguments that contain no space. The CLI finds its
+home directory through `USERPROFILE`, which Bazel doesn't pass to actions, so actions running
+`$(AWS_CLI_BIN)` need `--action_env=USERPROFILE`.
 
 ## Support
 
